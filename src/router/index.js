@@ -1,18 +1,67 @@
-// src/router/index.js
 import { createRouter, createWebHistory } from "vue-router";
+import {
+  House,
+  User,
+  Operation,
+  ChatRound,
+  Avatar,
+} from "@element-plus/icons-vue";
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: () => import("../views/Home/index.vue"),
+    redirect: "/home",
   },
   {
-    path: "/login",
-    name: "Login",
-    component: () => import("../views/Login.vue"),
+    path: "/home",
+    name: "home",
+    component: () => import("../views/Home/index.vue"),
+    meta: {
+      title: "首页",
+      icon: House,
+      showInMenu: true,
+    },
   },
-  // 其他后台管理页面
+  {
+    path: "/personnel",
+    name: "personnel",
+    component: () => import("../views/Personnel/index.vue"),
+    meta: {
+      title: "人员管理",
+      icon: User,
+      showInMenu: true,
+    },
+  },
+  {
+    path: "/project",
+    name: "project",
+    component: () => import("../views/Project/index.vue"),
+    meta: {
+      title: "项目展示管理",
+      icon: Operation,
+      showInMenu: true,
+    },
+  },
+  {
+    path: "/contact",
+    name: "contact",
+    component: () => import("../views/Contact/index.vue"),
+    meta: {
+      title: "联系方式设置",
+      icon: ChatRound,
+      showInMenu: true,
+    },
+  },
+  {
+    path: "/account",
+    name: "account",
+    component: () => import("../views/Account/index.vue"),
+    meta: {
+      title: "账号管理",
+      icon: Avatar,
+      showInMenu: true,
+    },
+  },
 ];
 
 const router = createRouter({
