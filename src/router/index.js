@@ -17,18 +17,8 @@ const routes = [
     name: "home",
     component: () => import("../views/Home/index.vue"),
     meta: {
-      title: "首页",
+      title: "首页设置",
       icon: House,
-      showInMenu: true,
-    },
-  },
-  {
-    path: "/personnel",
-    name: "personnel",
-    component: () => import("../views/Personnel/index.vue"),
-    meta: {
-      title: "人员管理",
-      icon: User,
       showInMenu: true,
     },
   },
@@ -39,6 +29,16 @@ const routes = [
     meta: {
       title: "项目展示管理",
       icon: Operation,
+      showInMenu: true,
+    },
+  },
+  {
+    path: "/personnel",
+    name: "personnel",
+    component: () => import("../views/Personnel/index.vue"),
+    meta: {
+      title: "部门管理",
+      icon: User,
       showInMenu: true,
     },
   },

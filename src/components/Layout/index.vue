@@ -15,8 +15,6 @@
         </el-header>
 
         <el-main class="main" style="overflow: auto"> <router-view /> </el-main>
-
-        <el-footer class="footer" height="50px"> Footer </el-footer>
       </el-container>
     </el-container>
   </div>
@@ -62,14 +60,5 @@ const toggleCollapse = () => {
 .main {
   background: #f3f4f6;
   padding: 20px;
-}
-
-.footer {
-  border-top: 1px solid #ebeef5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: #909399;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <el-card width="100%">
+  <el-card style="height: 100%;">
     <template #header>
         <div class="card-header">
             <span><slot name="header"></slot></span>
@@ -24,5 +24,12 @@
 .card-footer {
     display: flex;
     justify-content: end;
+    position: relative;
+}
+:deep(.el-card__header) {
+    border-bottom: none
+}
+:deep(.el-card__footer) {
+    border-top: none;
 }
 </style>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useUserStore } from "../store"
 
 const service = axios.create({
   //   baseURL: "https://api.example.com",
@@ -11,14 +12,17 @@ service.interceptors.request.use(
     // if (token) {
     //   config.headers["Authorization"] = `Bearer ${token}`;
     // }
-    return config;
+    const userStore = useUserStore()
+    if (userStore.token) {
+      config.headers.Authorization = userStore.token
+    }
+    return config
   },
   (error) => {
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
 );
 
-// 响应拦截器
 service.interceptors.response.use(
   (response) => {
     const { data } = response;

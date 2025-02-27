@@ -1,4 +1,9 @@
-import { createPinia } from "pinia";
+import { createPinia } from "pinia"
+import persist from 'pinia-plugin-persistedstate'
 
-const store = createPinia();
-export default store;
+const pinia = createPinia()
+pinia.use(persist)
+export default pinia
+
+import { useUserStore } from "./modules/user"
+export { useUserStore }
