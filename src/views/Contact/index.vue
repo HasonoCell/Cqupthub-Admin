@@ -11,7 +11,7 @@ const formModel = ref({
 
 const rules = {
   address: [
-    { required: true, message: '请输入公司地址', trigger: 'blur' },
+    { required: true, message: '请输入工作室地址', trigger: 'blur' },
   ],
   phoneNum: [
     { required: true, message: '请输入电话号码', trigger: 'blur' },
@@ -20,7 +20,7 @@ const rules = {
     { required: true, message: '请输入邮箱账号', trigger: 'blur' },
   ],
   wechat: [
-    { required: true, message: '请输入公众号', trigger: 'blur' },
+    { required: true, message: '请输入联系QQ', trigger: 'blur' },
   ],
 }
 
@@ -40,8 +40,8 @@ const handleChange = async() => {
       :model="formModel" :rules="rules" ref="formRef">
         <div class="form-grid">
           <div class="form-column">
-            <el-form-item label="公司地址" label-position="top" prop="address">
-              <el-input type="text" placeholder="请输入公司地址"
+            <el-form-item label="工作室地址" label-position="top" prop="address">
+              <el-input type="text" placeholder="请输入工作室地址"
               v-model="formModel.address"></el-input>
             </el-form-item>
             <el-form-item label="邮箱地址" label-position="top" prop="email">
@@ -54,8 +54,8 @@ const handleChange = async() => {
               <el-input type="password" placeholder="请输入联系电话"
               v-model="phoneNum"></el-input>
             </el-form-item>
-            <el-form-item label="微信公众号" label-position="top" prop="wechat">
-              <el-input type="password" placeholder="请输入微信公众号"
+            <el-form-item label="联系QQ" label-position="top" prop="wechat">
+              <el-input type="password" placeholder="请输入联系QQ"
               v-model="formModel.wechat"></el-input>
             </el-form-item>
           </div>

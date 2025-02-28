@@ -10,4 +10,17 @@ export default defineConfig({
       "@": resolve(__dirname, "src"), // 配置 @ 指向 src 目录
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        logger: {
+          warn: (message, options) => {
+            if (!message.includes('darken()')) {
+              console.warn(message)
+            }
+          }
+        }
+      }
+    }
+  }
 });

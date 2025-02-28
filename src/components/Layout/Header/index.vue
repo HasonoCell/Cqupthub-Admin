@@ -54,14 +54,5 @@ const handleLogout = () => {
   }
 }
 
-:deep(.el-button) {
-  color: white;
-  background: black;
-  border: none;
-  &:hover {
-    color: white;
-    background: black;
-    border: none;
-  }
-}
+
 </style>

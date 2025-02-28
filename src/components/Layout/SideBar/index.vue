@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { computed } from "vue";
 
 defineProps({
@@ -41,10 +41,10 @@ defineProps({
 });
 
 const router = useRouter();
-const route = useRoute();
 
 const menuRoutes = computed(() => {
-  return router.options.routes.filter((route) => route.meta?.showInMenu);
+  const layoutRoute = router.options.routes.find(r => r.name === 'layout');
+  return layoutRoute?.children?.filter(route => route.meta?.showInMenu) || [];
 });
 </script>
 
