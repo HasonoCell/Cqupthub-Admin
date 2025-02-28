@@ -14,8 +14,16 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+import { useUserStore } from '../../../store';
+import { ElMessage } from 'element-plus';
+
+const userStore = useUserStore()
+const router = useRouter()
 const handleLogout = () => {
-  console.log("执行退出登录");
+  userStore.removeToken()
+  router.push('/login')
+  ElMessage.success('退出成功')
 };
 </script>
 
