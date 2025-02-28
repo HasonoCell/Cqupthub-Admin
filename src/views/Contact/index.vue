@@ -1,6 +1,7 @@
 <script setup>
 import PageCard from '@/components/PageCard/index.vue'
 import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
 
 const formModel = ref({
   address: '',
@@ -19,16 +20,22 @@ const rules = {
   email: [
     { required: true, message: '请输入邮箱账号', trigger: 'blur' },
   ],
-  wechat: [
+  qqNum: [
     { required: true, message: '请输入联系QQ', trigger: 'blur' },
   ],
 }
 
 const formRef = ref()
 
-const handleChange = async() => {
-  await formRef.value.validate()
-  console.log('保存联系方式...')
+const handleChange = async () => {
+  try {
+    await formRef.value.validate()
+    console.log('保存联系方式...')
+    // 这里添加实际保存逻辑
+  } catch (error) {
+    console.error('表单验证失败:', error)
+    ElMessage.error('请正确填写所有必填项')
+  }
 }
 </script>
 
@@ -45,18 +52,18 @@ const handleChange = async() => {
               v-model="formModel.address"></el-input>
             </el-form-item>
             <el-form-item label="邮箱地址" label-position="top" prop="email">
-              <el-input type="password" placeholder="请输入邮箱地址"
+              <el-input type="text" placeholder="请输入邮箱地址"
               v-model="formModel.email"></el-input>
             </el-form-item>
           </div>
           <div class="form-column">
             <el-form-item label="联系电话" label-position="top" prop="phoneNum">
-              <el-input type="password" placeholder="请输入联系电话"
-              v-model="phoneNum"></el-input>
+              <el-input type="text" placeholder="请输入联系电话"
+              v-model="formModel.phoneNum"></el-input>
             </el-form-item>
-            <el-form-item label="联系QQ" label-position="top" prop="wechat">
-              <el-input type="password" placeholder="请输入联系QQ"
-              v-model="formModel.wechat"></el-input>
+            <el-form-item label="联系QQ" label-position="top" prop="qqNum">
+              <el-input type="text" placeholder="请输入联系QQ"
+              v-model="formModel.qqNum"></el-input>
             </el-form-item>
           </div>
         </div>

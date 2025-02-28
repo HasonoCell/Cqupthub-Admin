@@ -1,19 +1,14 @@
 <template>
-  <div
-    class="sidebar-container"
-    :style="{ width: isCollapse ? '64px' : '200px' }"
-  >
+  <div class="sidebar-container">
     <div class="logo-wrapper">
-      <div class="logo" :class="{ 'collapse-logo': isCollapse }">Logo</div>
+      <img src="@/assets/sidebar-logo.png" alt="Logo" />
     </div>
 
     <el-menu
-      :collapse="isCollapse"
       :default-active="$route.path"
-      class="el-menu-vertical-demo"
       background-color="#fff"
-      text-color="#333"
-      active-text-color="#409eff"
+      text-color="#4B5563"
+      active-text-color="#fff"
       router
     >
       <el-menu-item
@@ -51,53 +46,37 @@ const menuRoutes = computed(() => {
 <style scoped>
 .sidebar-container {
   height: 100%;
-  transition: width 0.3s ease;
   overflow: hidden;
 }
 
 .logo-wrapper {
-  padding: 15px 0;
-  text-align: center;
-  border-bottom: 1px solid #e6e6e6;
-}
+  width: 100%;
+  height: 81px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-.logo {
-  font-size: 20px;
-  font-weight: bold;
-  color: #409eff;
-  transition: all 0.3s;
-}
-
-.collapse-logo {
-  font-size: 24px;
-  letter-spacing: 2px;
+  img {
+    height: 81px;
+    width: 81px;
+  }
 }
 
 .el-menu {
   border-right: none;
 }
 
-.el-menu--collapse {
-  :deep(.el-menu-item) {
-    display: flex;
-    justify-content: center;
-
-    > span {
-      display: none;
-    }
-    .el-icon {
-      margin-right: 0 !important;
-    }
-  }
-}
-
 .el-menu-item {
   height: 56px;
   line-height: 56px;
   font-size: 14px;
+  transition: 
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s ease;
 
   &:hover {
-    background-color: #e6f7ff !important;
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    transition-delay: 0.05s;
   }
 
   .el-icon {
@@ -107,17 +86,7 @@ const menuRoutes = computed(() => {
 }
 
 .el-menu-item.is-active {
-  background-color: #e6f7ff !important;
+  background-color: #000 !important;
   position: relative;
-
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 3px;
-    background-color: #409eff;
-  }
 }
 </style>

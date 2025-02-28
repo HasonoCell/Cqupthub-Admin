@@ -8,6 +8,7 @@ const formModel = ref({
   username: "",
   password: "",
 });
+
 const rules = {
   username: [
     { required: true, message: "请输入用户名", trigger: "blur" },
@@ -22,16 +23,27 @@ const rules = {
     },
   ],
 };
+
 const formRef = ref();
 
 const userStore = useUserStore();
+
 const router = useRouter();
+
+const loading = ref(false)
 const handleLogin = async () => {
+  try {
+    loading.value = true
     await formRef.value.validate();
-  /* const res = await userLoginService(formModel.value) // 这里userLoginService返回token，未定义
-    userStore.setToken(res.data.data) */
-  ElMessage.success("登录成功");
-  router.push("/");
+    // const res = await userLoginService(formModel.value) 这里userLoginService返回token，未定义
+    // userStore.setToken(res.data.data)
+    ElMessage.success("登录成功");
+    router.push("/");
+  } catch (error) {
+    ElMessage.error(error.message)
+  } finally {
+    loading.value = false
+  }
 };
 </script>
 
@@ -64,21 +76,28 @@ const handleLogin = async () => {
 <style scoped lang="scss">
 .container {
   height: 100vh;
-  opacity: 1;
   background: linear-gradient(270deg, rgba(0, 0, 0, 0) 0%, #000000 75%);
 }
+
 .logo {
-  background: url("@/assets/login-logo.png") no-repeat 50% center / 544px auto;
+  height: 100vh;
+  min-width: 100px;
+  min-height: 100px;
+  background: url("@/assets/login-logo.png") no-repeat center center / contain;
 }
+
 .login {
   display: flex;
   align-items: center;
 }
+
 .login-contain {
   width: 506px;
   height: 282px;
+  min-width: 200px;
+  min-height: 160px;
+  max-width: 90%;
   border-radius: 23px;
-  opacity: 1;
   background: #ffffff;
   box-shadow: 12px 16px 10px 0px rgba(0, 0, 0, 0.4);
   display: flex;
@@ -93,27 +112,29 @@ const handleLogin = async () => {
   }
 
   .el-input {
-    width: 355px;
+    width: 100%;
+    max-width: 355px;
+    min-width: 200px;
     height: 42px;
     border-radius: 5px;
-    opacity: 1;
     box-sizing: border-box;
     border: 1px solid #000000;
   }
 
   .el-button {
-    width: 256px;
+    width: 100%;
+    max-width: 200px;
+    min-width: 100px;
     height: 30px;
     border-radius: 5px;
     background: #28d1c6;
     color: #ffffff;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); // 贝塞尔曲线过渡
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    // 悬停状态
     &:hover {
-      background: darken(#28d1c6, 16.39%); // 颜色加深
-      transform: translateY(-2px); // 上浮效果
-      box-shadow: 0 4px 12px rgba(40, 209, 198, 0.3); // 动态阴影
+      background: darken(#28d1c6, 16.39%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(40, 209, 198, 0.3);
     }
   }
 }
