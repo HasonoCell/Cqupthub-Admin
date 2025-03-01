@@ -30,19 +30,19 @@ const userStore = useUserStore();
 
 const router = useRouter();
 
-const loading = ref(false)
+const loading = ref(false);
 const handleLogin = async () => {
   try {
-    loading.value = true
+    loading.value = true;
     await formRef.value.validate();
     // const res = await userLoginService(formModel.value) 这里userLoginService返回token，未定义
     // userStore.setToken(res.data.data)
     ElMessage.success("登录成功");
     router.push("/");
   } catch (error) {
-    ElMessage.error(error.message)
+    ElMessage.error(error.message);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 };
 </script>

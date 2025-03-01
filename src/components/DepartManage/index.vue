@@ -18,12 +18,18 @@ const persons = ref([
     name: "钟雨廷",
   },
 ]);
+const isDrawerVisible = ref(false);
+const editFormData = ref({
+  name: "",
+  requirements: "",
+  email: "",
+});
 
 // 如果人数超过8个，则只展示前8个
 const displayedPersons = computed(() => persons.value.slice(0, 8));
 
 const editPerson = (index) => {
-  // 调用 edit 组件
+  isDrawerVisible.value = true
   console.log("编辑人员：", displayedPersons.value[index]);
 };
 
@@ -49,12 +55,12 @@ const addDepartment = () => {
 };
 
 defineProps({
-  activeTab: String,
+  activeButton: String,
 });
 </script>
 
 <template>
-  <PageCard v-if="activeTab === 'departManage'">
+  <PageCard v-if="activeButton === 'departManage'">
     <template #header>部门管理</template>
     <template #default>
       <el-row :gutter="20" class="card-container">
@@ -121,6 +127,42 @@ defineProps({
       <el-button color="#000">保存更改</el-button>
     </template>
   </PageCard>
+
+  <el-drawer
+    v-model="isDrawerVisible"
+    :size="'50%'"
+    direction="rtl"
+    :with-header="false"
+  >
+    <el-form :model="editFormData" label-width="80px">
+      <el-form-item label="岗位名称" label-position="top">
+        <el-input
+          v-model="editFormData.name"
+          placeholder="请输入岗位名称"
+        ></el-input>
+      </el-form-item>
+
+      <el-form-item label="岗位要求" label-position="top">
+        <el-input
+          type="textarea"
+          v-model="editFormData.requirements"
+        ></el-input>
+      </el-form-item>
+
+      <el-form-item label="简历投递" label-position="top">
+        <el-input
+          v-model="editFormData.email"
+          placeholder="请输入邮箱"
+        ></el-input>
+      </el-form-item>
+    </el-form>
+    <el-button type="primary" color="#fff" @click="isDrawerVisible = false"
+      >取消</el-button
+    >
+    <el-button type="primary" color="#000" @click="handleConfirm"
+      >确定</el-button
+    >
+  </el-drawer>
 </template>
 
 <style scoped lang="scss">
@@ -202,6 +244,13 @@ defineProps({
   margin-right: 5px;
   color: #999;
   cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    filter: brightness(0.9);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
 }
 
 .add-card-content {
