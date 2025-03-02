@@ -1,14 +1,10 @@
 <template>
-  <div
-    class="sidebar-container"
-    :style="{ width: isCollapse ? '64px' : '200px' }"
-  >
+  <div class="sidebar-container">
     <div class="logo-wrapper">
-      <div class="logo" :class="{ 'collapse-logo': isCollapse }">Logo</div>
+      <img src="@/assets/sidebar-logo.png" alt="Logo" />
     </div>
 
     <el-menu
-      :collapse="isCollapse"
       :default-active="$route.path"
       class="el-menu-vertical"
       background-color="#fff"
@@ -33,7 +29,7 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { computed } from "vue";
 
 defineProps({
@@ -41,24 +37,25 @@ defineProps({
 });
 
 const router = useRouter();
-const route = useRoute();
 
 const menuRoutes = computed(() => {
-  return router.options.routes.filter((route) => route.meta?.showInMenu);
+  const layoutRoute = router.options.routes.find((r) => r.name === "layout");
+  return layoutRoute?.children?.filter((route) => route.meta?.showInMenu) || [];
 });
 </script>
 
 <style scoped lang="scss">
 .sidebar-container {
   height: 100%;
-  transition: width 0.3s ease;
   overflow: hidden;
 }
 
 .logo-wrapper {
-  padding: 15px 0;
-  text-align: center;
-  border-bottom: 1px solid #e6e6e6;
+  width: 100%;
+  height: 81px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .logo {
@@ -91,6 +88,8 @@ const menuRoutes = computed(() => {
   height: 56px;
   line-height: 56px;
   font-size: 14px;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s ease;
 
   &:hover {
     background-color: #858484 !important;

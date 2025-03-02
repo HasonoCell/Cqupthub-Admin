@@ -1,5 +1,5 @@
 <template>
-  <el-card style="height: 100%;">
+  <el-card style="height: 100%;" shadow="never">
     <template #header>
         <div class="card-header">
             <span><slot name="header"></slot></span>

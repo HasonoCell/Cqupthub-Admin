@@ -1,6 +1,7 @@
 <script setup>
 import PageCard from "@/components/PageCard/index.vue";
 import { ref } from "vue";
+import { ElMessage } from "element-plus";
 
 const formModel = ref({
   username: "",
@@ -53,8 +54,14 @@ const rules = {
 };
 const formRef = ref();
 const handleChange = async () => {
-  await formRef.value.validate();
-  console.log("更新密码...");
+  try {
+    await formRef.value.validate()
+    // 这里添加调用更新密码接口的逻辑
+    console.log("验证通过，开始提交...")
+    ElMessage.success('密码更新成功')
+  } catch (error) {
+    console.error('操作失败:', error)
+  }
 };
 </script>
 
@@ -67,6 +74,7 @@ const handleChange = async () => {
         style="width: 100%"
         :model="formModel"
         :rules="rules"
+        ref="formRef"
       >
         <div class="form-grid">
           <div class="form-column">

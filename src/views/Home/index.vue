@@ -90,9 +90,6 @@ const handleFileChange = (file) => {
 
 .el-button {
   margin-left: 20px;
-  background-color: black;
-  color: white;
-  border: none;
 }
 
 .photo-wall {
