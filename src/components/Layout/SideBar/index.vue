@@ -10,10 +10,10 @@
     <el-menu
       :collapse="isCollapse"
       :default-active="$route.path"
-      class="el-menu-vertical-demo"
+      class="el-menu-vertical"
       background-color="#fff"
       text-color="#333"
-      active-text-color="#409eff"
+      active-text-color="#fff"
       router
     >
       <el-menu-item
@@ -48,7 +48,7 @@ const menuRoutes = computed(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .sidebar-container {
   height: 100%;
   transition: width 0.3s ease;
@@ -62,9 +62,6 @@ const menuRoutes = computed(() => {
 }
 
 .logo {
-  font-size: 20px;
-  font-weight: bold;
-  color: #409eff;
   transition: all 0.3s;
 }
 
@@ -77,17 +74,16 @@ const menuRoutes = computed(() => {
   border-right: none;
 }
 
-.el-menu--collapse {
-  :deep(.el-menu-item) {
-    display: flex;
-    justify-content: center;
+::v-deep .el-menu--collapse .el-menu-item {
+  display: flex;
+  justify-content: center;
 
-    > span {
-      display: none;
-    }
-    .el-icon {
-      margin-right: 0 !important;
-    }
+  > span {
+    display: none;
+  }
+
+  .el-icon {
+    margin-right: 0 !important;
   }
 }
 
@@ -97,7 +93,8 @@ const menuRoutes = computed(() => {
   font-size: 14px;
 
   &:hover {
-    background-color: #e6f7ff !important;
+    background-color: #858484 !important;
+    color: #ffffff !important;
   }
 
   .el-icon {
@@ -106,18 +103,9 @@ const menuRoutes = computed(() => {
   }
 }
 
+/* 激活项样式 */
 .el-menu-item.is-active {
-  background-color: #e6f7ff !important;
+  background-color: #000000 !important;
   position: relative;
-
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 3px;
-    background-color: #409eff;
-  }
 }
 </style>
