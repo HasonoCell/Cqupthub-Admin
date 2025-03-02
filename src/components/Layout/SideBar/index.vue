@@ -17,9 +17,12 @@
         :key="route.path"
         :index="route.path"
       >
-        <el-icon>
-          <component :is="route.meta.icon" />
-        </el-icon>
+        <SvgIcon
+          v-if="route.meta?.icon"
+          :name="route.meta.icon"
+          size="22px"
+          :color="$route.path === route.path ? 'white' : 'black'"
+        />
         <template #title>
           <span>{{ route.meta.title }}</span>
         </template>
@@ -31,6 +34,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { computed } from "vue";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 
 defineProps({
   isCollapse: Boolean,
@@ -54,8 +58,12 @@ const menuRoutes = computed(() => {
   width: 100%;
   height: 81px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  img {
+    height: 81px;
+    width: 81px;
+  }
 }
 
 .logo {
@@ -71,38 +79,21 @@ const menuRoutes = computed(() => {
   border-right: none;
 }
 
-::v-deep .el-menu--collapse .el-menu-item {
-  display: flex;
-  justify-content: center;
-
-  > span {
-    display: none;
-  }
-
-  .el-icon {
-    margin-right: 0 !important;
-  }
-}
-
 .el-menu-item {
   height: 56px;
   line-height: 56px;
   font-size: 14px;
   transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.2s ease;
+  display: flex;
+  gap: 10px;
 
   &:hover {
     background-color: #858484 !important;
     color: #ffffff !important;
   }
-
-  .el-icon {
-    margin-right: 8px;
-    font-size: 18px;
-  }
 }
 
-/* 激活项样式 */
 .el-menu-item.is-active {
   background-color: #000000 !important;
   position: relative;
