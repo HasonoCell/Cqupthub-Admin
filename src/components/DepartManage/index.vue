@@ -18,34 +18,37 @@ const persons = ref([
     name: "钟雨廷",
   },
 ]);
+
 const isDrawerVisible = ref(false);
+
 const editFormData = ref({
-  name: "",
-  requirements: "",
+  departName: "",
+  personAvatar: "",
+  personName: "",
   email: "",
+  personIntro: "",
 });
 
-// 如果人数超过8个，则只展示前8个
 const displayedPersons = computed(() => persons.value.slice(0, 8));
 
-const editPerson = (index) => {
-  isDrawerVisible.value = true
-  console.log("编辑人员：", displayedPersons.value[index]);
+const editDepart = () => {
+  // 调用编辑api
+  isDrawerVisible.value = true;
 };
 
-const deletePerson = async (index) => {
+const deleteDepart = async (index) => {
   await ElMessageBox.confirm("你确定删除该部门信息吗？", "温馨提示", {
     type: "warning",
     confirmButtonText: "确认",
     cancelButtonText: "取消",
   });
-  // await 删除信息api函数
+  // 调用删除api
   ElMessage.success("删除成功");
   persons.value.splice(index, 1);
 };
 
-const addDepartment = () => {
-  // 调用 edit 组件
+const addDepart = () => {
+  // 调用增加api
   if (persons.value.length < 8) {
     persons.value.push({
       department: "新部门",
@@ -53,6 +56,12 @@ const addDepartment = () => {
     });
   }
 };
+
+const handleAvatarSuccess = () => {};
+
+const beforeAvatarUpload = () => {};
+
+const handleConfirm = () => {};
 
 defineProps({
   activeButton: String,
@@ -73,10 +82,10 @@ defineProps({
           :lg="6"
           class="card-column"
         >
-          <el-card shadow="hover" class="person-card">
+          <el-card shadow="hover" class="depart-card">
             <div class="info-card-content">
               <!-- 头像 -->
-              <div class="avatar">
+              <div class="infro-avatar">
                 <img :src="person.avatar" alt="Avatar" v-if="person.avatar" />
                 <div class="avatar-placeholder" v-else></div>
               </div>
@@ -86,15 +95,12 @@ defineProps({
               <p class="name">{{ person.name }}</p>
               <!-- 编辑/删除功能 -->
               <div class="actions">
-                <el-tag
-                  type="primary"
-                  @click="editPerson(index)"
-                  class="action-tag"
+                <el-tag type="primary" @click="editDepart()" class="action-tag"
                   >编辑</el-tag
                 >
                 <el-tag
                   type="danger"
-                  @click="deletePerson(index)"
+                  @click="deleteDepart(index)"
                   class="action-tag"
                   >删除</el-tag
                 >
@@ -113,7 +119,7 @@ defineProps({
           class="card-column"
         >
           <el-card shadow="hover" class="add-card">
-            <div class="add-card-content" @click="addDepartment">
+            <div class="add-card-content" @click="addDepart">
               <div class="add-button">
                 <el-icon><Plus /></el-icon>
                 <span>添加部门</span>
@@ -124,7 +130,7 @@ defineProps({
       </el-row>
     </template>
     <template #footer>
-      <el-button color="#000">保存更改</el-button>
+      <el-button color="#000" @click="handleConfirm">保存更改</el-button>
     </template>
   </PageCard>
 
@@ -134,34 +140,50 @@ defineProps({
     direction="rtl"
     :with-header="false"
   >
-    <el-form :model="editFormData" label-width="80px">
-      <el-form-item label="岗位名称" label-position="top">
-        <el-input
-          v-model="editFormData.name"
-          placeholder="请输入岗位名称"
-        ></el-input>
+    <el-form label-width="120px" :model="editFormData">
+      <el-form-item label="部门名称:" label-position="top">
+        <el-input v-model="editFormData.departName" />
       </el-form-item>
 
-      <el-form-item label="岗位要求" label-position="top">
+      <el-form-item label="部长头像:" label-position="top">
+        <div class="avatar-upload">
+          <el-image
+            style="width: 150px; height: 150px"
+            :src="editFormData.personAvatar"
+          />
+          <el-upload
+            class="upload-demo"
+            action="your_upload_api"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+            :show-file-list="false"
+          >
+            <el-button color="#000" type="primary" label-position="top"
+              >更换</el-button
+            >
+          </el-upload>
+        </div>
+      </el-form-item>
+
+      <el-form-item label="部长姓名:" label-position="top">
+        <el-input v-model="editFormData.personName" />
+      </el-form-item>
+
+      <el-form-item label="部长邮箱:" label-position="top">
+        <el-input v-model="editFormData.email" />
+      </el-form-item>
+
+      <el-form-item label="部长介绍:" label-position="top">
         <el-input
+          v-model="editFormData.personIntro"
           type="textarea"
-          v-model="editFormData.requirements"
-        ></el-input>
+          :rows="10"
+        />
       </el-form-item>
-
-      <el-form-item label="简历投递" label-position="top">
-        <el-input
-          v-model="editFormData.email"
-          placeholder="请输入邮箱"
-        ></el-input>
-      </el-form-item>
+      <div class="confirm-button">
+        <el-button color="#000" type="primary">确定</el-button>
+      </div>
     </el-form>
-    <el-button type="primary" color="#fff" @click="isDrawerVisible = false"
-      >取消</el-button
-    >
-    <el-button type="primary" color="#000" @click="handleConfirm"
-      >确定</el-button
-    >
   </el-drawer>
 </template>
 
@@ -175,7 +197,7 @@ defineProps({
   margin-bottom: 20px;
 }
 
-.person-card {
+.depart-card {
   transition: transform 0.3s ease;
   height: 240px;
   border: 2px solid #ebebeb;
@@ -191,7 +213,7 @@ defineProps({
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
 }
 
-.person-card:hover,
+.depart-card:hover,
 .add-card:hover {
   transform: scale(1.05);
 }
@@ -203,7 +225,7 @@ defineProps({
   justify-content: center;
 }
 
-.avatar {
+.infro-avatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -277,5 +299,22 @@ defineProps({
   .el-icon {
     margin-right: 5px;
   }
+}
+
+.confirm-button {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.avatar-upload {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+:deep(.el-form-item__label) {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 </style>

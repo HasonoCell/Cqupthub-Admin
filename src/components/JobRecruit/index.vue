@@ -68,14 +68,20 @@ const jobCategories = ref([
 ]);
 
 const expandedCategories = ref([]);
-const hoverCategory = ref(null);
+
+const hoverDepart = ref(null);
+
 const hoverJob = ref(null);
+
 const isDrawerVisible = ref(false);
+
 const editFormData = ref({
-  name: "",
-  requirements: "",
-  email: "",
+  belongTo: "",
+  positionName: "",
+  requirement: "",
+  deliveryEmail: "",
 });
+
 const selectedJob = ref(null);
 
 const toggleExpand = (index) => {
@@ -87,18 +93,11 @@ const toggleExpand = (index) => {
   }
 };
 
-const openEditDrawer = (categoryId, jobId) => {
+const editJob = (categoryId, jobId) => {
   const category = jobCategories.value.find((cate) => cate.id === categoryId);
   selectedJob.value = category.jobs.find((job) => job.id === jobId);
   editFormData.value = { ...selectedJob.value };
   isDrawerVisible.value = true;
-};
-
-const handleConfirm = () => {
-  selectedJob.value.name = editFormData.value.name;
-  selectedJob.value.requirements = editFormData.value.requirements;
-  selectedJob.value.email = editFormData.value.email;
-  isDrawerVisible.value = false;
 };
 
 const deleteJob = (categoryId, jobId) => {
@@ -107,6 +106,8 @@ const deleteJob = (categoryId, jobId) => {
     category.jobs = category.jobs.filter((job) => job.id !== jobId);
   }
 };
+
+const handleConfirm = () => {};
 
 defineProps({
   activeButton: String,
@@ -117,59 +118,57 @@ defineProps({
   <el-card v-if="activeButton === 'jobRecruit'">
     <div class="job-recruitment">
       <!-- 滚动区域 -->
-      <el-scrollbar style="max-height: 800px; overflow-y: auto">
-        <div
-          v-for="(category, index) in jobCategories"
-          :key="category.id"
-          class="job-category"
-        >
-          <!-- 岗位大类 -->
-          <div
-            class="category-header"
-            @mouseenter="hoverCategory = index"
-            @mouseleave="hoverCategory = null"
-            :class="{ 'hovered-category': hoverCategory === index }"
-          >
-            <span>{{ category.name }}</span>
-            <el-button
-              type="primary"
-              color="#fff"
-              :icon="Plus"
-              circle
-              @click="toggleExpand(index)"
-            ></el-button>
-          </div>
+      <el-scrollbar style="height: calc(100vh - 150px)" always>
+        <div class="scroll-content">
+          <div v-for="(category, index) in jobCategories" :key="category.id">
+            <!-- 岗位大类 -->
+            <div
+              class="depart-header"
+              @mouseenter="hoverDepart = index"
+              @mouseleave="hoverDepart = null"
+              :class="{ 'hovered-depart': hoverDepart === index }"
+            >
+              <span>{{ category.name }}</span>
+              <el-button
+                type="primary"
+                color="#fff"
+                :icon="Plus"
+                circle
+                @click="toggleExpand(index)"
+              ></el-button>
+            </div>
 
-          <!-- 细分岗位 -->
-          <el-collapse-transition>
-            <div v-if="expandedCategories.includes(index)" class="sub-jobs">
-              <div
-                v-for="job in category.jobs"
-                :key="job.id"
-                class="job-item"
-                @mouseenter="hoverJob = job.id"
-                @mouseleave="hoverJob = null"
-                :class="{ 'hovered-job': hoverJob === job.id }"
-              >
-                <span>{{ job.name }}</span>
-                <div class="actions">
-                  <el-button
-                    type="primary"
-                    icon="edit"
-                    color="#fff"
-                    circle
-                    @click="openEditDrawer(category.id, job.id)"
-                  ></el-button>
-                  <el-button
-                    type="danger"
-                    icon="delete"
-                    circle
-                    @click="deleteJob(category.id, job.id)"
-                  ></el-button>
+            <!-- 细分岗位 -->
+            <el-collapse-transition>
+              <div v-if="expandedCategories.includes(index)" class="sub-jobs">
+                <div
+                  v-for="job in category.jobs"
+                  :key="job.id"
+                  class="job-item"
+                  @mouseenter="hoverJob = job.id"
+                  @mouseleave="hoverJob = null"
+                  :class="{ 'hovered-job': hoverJob === job.id }"
+                >
+                  <span>{{ job.name }}</span>
+                  <div class="actions">
+                    <el-button
+                      type="primary"
+                      icon="edit"
+                      color="#fff"
+                      circle
+                      @click="editJob(category.id, job.id)"
+                    ></el-button>
+                    <el-button
+                      type="danger"
+                      icon="delete"
+                      circle
+                      @click="deleteJob(category.id, job.id)"
+                    ></el-button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </el-collapse-transition>
+            </el-collapse-transition>
+          </div>
         </div>
       </el-scrollbar>
 
@@ -184,7 +183,7 @@ defineProps({
         <el-form :model="editFormData" label-width="80px">
           <el-form-item label="岗位名称" label-position="top">
             <el-input
-              v-model="editFormData.name"
+              v-model="editFormData.positionName"
               placeholder="请输入岗位名称"
             ></el-input>
           </el-form-item>
@@ -192,7 +191,8 @@ defineProps({
           <el-form-item label="岗位要求" label-position="top">
             <el-input
               type="textarea"
-              v-model="editFormData.requirements"
+              :rows="10"
+              v-model="editFormData.requirement"
             ></el-input>
           </el-form-item>
 
@@ -203,9 +203,9 @@ defineProps({
             ></el-input>
           </el-form-item>
         </el-form>
-
-        <el-button @click="isDrawerVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleConfirm">确定</el-button>
+        <div class="confirm-button">
+          <el-button type="primary" @click="handleConfirm">确定</el-button>
+        </div>
       </el-drawer>
     </div>
   </el-card>
@@ -213,15 +213,15 @@ defineProps({
 
 <style scoped>
 .el-card {
-  height: 100vh;
+  height: auto;
+  min-height: 100vh;
 }
 
-.job-recruitment {
+.scroll-content {
   padding: 16px;
 }
 
-/* 岗位大类行样式 */
-.category-header {
+.depart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -249,7 +249,7 @@ defineProps({
   }
 }
 
-.category-header.hovered-category {
+.depart-header.hovered-depart {
   background-color: #ccc;
   color: #111;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
@@ -261,6 +261,7 @@ defineProps({
 
 /* 子岗位列表 */
 .sub-jobs {
+  overflow: hidden;
   padding-left: 20px;
 }
 
@@ -286,5 +287,15 @@ defineProps({
 
 .actions {
   display: flex;
+}
+
+.confirm-button {
+  display: flex;
+  justify-content: flex-end;
+}
+
+:deep(.el-form-item__label) {
+  font-size: 18px;
+  font-weight: 600;
 }
 </style>

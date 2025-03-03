@@ -2,7 +2,7 @@
   <el-card style="height: 100%;" shadow="never">
     <template #header>
         <div class="card-header">
-            <span><slot name="header"></slot></span>
+            <slot name="header"></slot>
         </div>
     </template>
     <div class="card-main">
@@ -19,12 +19,13 @@
 <style scoped lang="scss">
 .card-header {
     font-weight: 600;
+    display: flex;
+    justify-content: space-between;
   }
 
 .card-footer {
     display: flex;
     justify-content: end;
-    position: relative;
 }
 :deep(.el-card__header) {
     border-bottom: none

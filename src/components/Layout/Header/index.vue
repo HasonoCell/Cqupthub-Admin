@@ -16,11 +16,16 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../../../store';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 const userStore = useUserStore()
 const router = useRouter()
-const handleLogout = () => {
+const handleLogout = async() => {
+  await ElMessageBox.confirm('你确定要退出吗？', '温馨提示', {
+    type: 'warning',
+    confirmButtonText: '确定',
+    cancelButtonText: '取消'
+  })
   userStore.removeToken()
   router.push('/login')
   ElMessage.success('退出成功')
