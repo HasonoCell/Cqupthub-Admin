@@ -1,5 +1,5 @@
 <template>
-  <el-card style="height: 100%;" shadow="never">
+  <el-card  shadow="never">
     <template #header>
         <div class="card-header">
             <slot name="header"></slot>
@@ -27,6 +27,11 @@
     display: flex;
     justify-content: end;
 }
+
+.el-card {
+    height: 100%;
+}
+
 :deep(.el-card__header) {
     border-bottom: none
 }

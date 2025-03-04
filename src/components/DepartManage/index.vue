@@ -72,6 +72,7 @@ defineProps({
   <PageCard v-if="activeButton === 'departManage'">
     <template #header>部门管理</template>
     <template #default>
+      <!-- 部长信息展示 -->
       <el-row :gutter="20" class="card-container">
         <el-col
           v-for="(person, index) in displayedPersons"
@@ -84,18 +85,17 @@ defineProps({
         >
           <el-card shadow="hover" class="depart-card">
             <div class="info-card-content">
-              <!-- 头像 -->
               <div class="infro-avatar">
                 <img :src="person.avatar" alt="Avatar" v-if="person.avatar" />
                 <div class="avatar-placeholder" v-else></div>
               </div>
-              <!-- 部门 -->
               <p class="department">{{ person.department }}</p>
-              <!-- 姓名 -->
               <p class="name">{{ person.name }}</p>
-              <!-- 编辑/删除功能 -->
               <div class="actions">
-                <el-tag type="primary" @click="editDepart()" class="action-tag"
+                <el-tag 
+                  type="primary" 
+                  @click="editDepart()" 
+                  class="action-tag"
                   >编辑</el-tag
                 >
                 <el-tag
@@ -120,10 +120,9 @@ defineProps({
         >
           <el-card shadow="hover" class="add-card">
             <div class="add-card-content" @click="addDepart">
-              <div class="add-button">
-                <el-icon><Plus /></el-icon>
-                <span>添加部门</span>
-              </div>
+              <el-button class="custom-add-button" :icon="Plus">
+                添加项目
+              </el-button>
             </div>
           </el-card>
         </el-col>
@@ -134,6 +133,7 @@ defineProps({
     </template>
   </PageCard>
 
+  <!-- 编辑区域 -->
   <el-drawer
     v-model="isDrawerVisible"
     :size="'50%'"
@@ -203,6 +203,7 @@ defineProps({
   border: 2px solid #ebebeb;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
 }
+
 .add-card {
   display: flex;
   justify-content: center;
@@ -215,7 +216,7 @@ defineProps({
 
 .depart-card:hover,
 .add-card:hover {
-  transform: scale(1.05);
+  transform: scale(1.025);
 }
 
 .info-card-content {
@@ -284,21 +285,23 @@ defineProps({
   height: 100%;
 }
 
-.add-button {
-  display: inline-flex;
+.custom-add-button {
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 20px;
-  font-size: 16px;
-  color: #c0c4cc;
-  border: 1px dashed #c0c4cc;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
+  padding: 10px 15px;
+  border: 2px dashed #dcdfe6;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #606266;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
 
-  .el-icon {
-    margin-right: 5px;
-  }
+.custom-add-button:hover {
+  border-color: #666;
+  color: #666;
+  background-color: #f2f2f2;
 }
 
 .confirm-button {

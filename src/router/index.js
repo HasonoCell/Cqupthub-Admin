@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useUserStore } from "../store"
 import {
   House,
   User,
@@ -9,10 +8,10 @@ import {
 } from "@element-plus/icons-vue";
 
 const routes = [
-  { 
-    path: '/login', 
-    name: 'login', 
-    component: () => import('../views/Login/Login.vue') 
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('../views/Login/Login.vue')
   },
   {
     path: "/",

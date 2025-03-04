@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { Plus } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 const jobCategories = ref([
   {
@@ -94,17 +95,29 @@ const toggleExpand = (index) => {
 };
 
 const editJob = (categoryId, jobId) => {
+  // 调用编辑api
   const category = jobCategories.value.find((cate) => cate.id === categoryId);
   selectedJob.value = category.jobs.find((job) => job.id === jobId);
   editFormData.value = { ...selectedJob.value };
   isDrawerVisible.value = true;
 };
 
-const deleteJob = (categoryId, jobId) => {
+const deleteJob = async (categoryId, jobId) => {
+  await ElMessageBox.confirm("你确定删除该部门信息吗？", "温馨提示", {
+    type: "warning",
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+  });
+  // 调用删除api
+  ElMessage.success("删除成功");
   const category = jobCategories.value.find((cat) => cat.id === categoryId);
   if (category) {
     category.jobs = category.jobs.filter((job) => job.id !== jobId);
   }
+};
+
+const addJob = () => {
+  // 调用增加api
 };
 
 const handleConfirm = () => {};
@@ -116,98 +129,96 @@ defineProps({
 
 <template>
   <el-card v-if="activeButton === 'jobRecruit'">
-    <div class="job-recruitment">
-      <!-- 滚动区域 -->
-      <el-scrollbar style="height: calc(100vh - 150px)" always>
-        <div class="scroll-content">
-          <div v-for="(category, index) in jobCategories" :key="category.id">
-            <!-- 岗位大类 -->
-            <div
-              class="depart-header"
-              @mouseenter="hoverDepart = index"
-              @mouseleave="hoverDepart = null"
-              :class="{ 'hovered-depart': hoverDepart === index }"
-            >
-              <span>{{ category.name }}</span>
-              <el-button
-                type="primary"
-                color="#fff"
-                :icon="Plus"
-                circle
-                @click="toggleExpand(index)"
-              ></el-button>
-            </div>
+    <!-- 滚动区域 -->
+    <el-scrollbar height="calc(100vh - 150px)" always>
+      <div class="scroll-content">
+        <div v-for="(category, index) in jobCategories" :key="category.id">
+          <!-- 部门信息 -->
+          <div
+            class="depart-header"
+            @mouseenter="hoverDepart = index"
+            @mouseleave="hoverDepart = null"
+            :class="{ 'hovered-depart': hoverDepart === index }"
+          >
+            <span>{{ category.name }}</span>
+            <el-button
+              type="primary"
+              color="#fff"
+              :icon="Plus"
+              circle
+              @click="toggleExpand(index)"
+            ></el-button>
+          </div>
 
-            <!-- 细分岗位 -->
-            <el-collapse-transition>
-              <div v-if="expandedCategories.includes(index)" class="sub-jobs">
-                <div
-                  v-for="job in category.jobs"
-                  :key="job.id"
-                  class="job-item"
-                  @mouseenter="hoverJob = job.id"
-                  @mouseleave="hoverJob = null"
-                  :class="{ 'hovered-job': hoverJob === job.id }"
-                >
-                  <span>{{ job.name }}</span>
-                  <div class="actions">
-                    <el-button
-                      type="primary"
-                      icon="edit"
-                      color="#fff"
-                      circle
-                      @click="editJob(category.id, job.id)"
-                    ></el-button>
-                    <el-button
-                      type="danger"
-                      icon="delete"
-                      circle
-                      @click="deleteJob(category.id, job.id)"
-                    ></el-button>
-                  </div>
+          <!-- 岗位内容 -->
+          <el-collapse-transition>
+            <div v-if="expandedCategories.includes(index)" class="sub-jobs">
+              <div
+                v-for="job in category.jobs"
+                :key="job.id"
+                class="job-item"
+                @mouseenter="hoverJob = job.id"
+                @mouseleave="hoverJob = null"
+                :class="{ 'hovered-job': hoverJob === job.id }"
+              >
+                <span>{{ job.name }}</span>
+                <div class="actions">
+                  <el-button
+                    type="primary"
+                    icon="edit"
+                    color="#fff"
+                    circle
+                    @click="editJob(category.id, job.id)"
+                  ></el-button>
+                  <el-button
+                    type="danger"
+                    icon="delete"
+                    circle
+                    @click="deleteJob(category.id, job.id)"
+                  ></el-button>
                 </div>
               </div>
-            </el-collapse-transition>
-          </div>
+            </div>
+          </el-collapse-transition>
         </div>
-      </el-scrollbar>
+      </div>
+    </el-scrollbar>
 
-      <!-- 编辑抽屉 -->
-      <el-drawer
-        v-model="isDrawerVisible"
-        :size="'50%'"
-        direction="rtl"
-        :with-header="false"
-        :show-close="false"
-      >
-        <el-form :model="editFormData" label-width="80px">
-          <el-form-item label="岗位名称" label-position="top">
-            <el-input
-              v-model="editFormData.positionName"
-              placeholder="请输入岗位名称"
-            ></el-input>
-          </el-form-item>
+    <!-- 编辑抽屉 -->
+    <el-drawer
+      v-model="isDrawerVisible"
+      :size="'50%'"
+      direction="rtl"
+      :with-header="false"
+      :show-close="false"
+    >
+      <el-form :model="editFormData" label-width="80px">
+        <el-form-item label="岗位名称" label-position="top">
+          <el-input
+            v-model="editFormData.positionName"
+            placeholder="请输入岗位名称"
+          ></el-input>
+        </el-form-item>
 
-          <el-form-item label="岗位要求" label-position="top">
-            <el-input
-              type="textarea"
-              :rows="10"
-              v-model="editFormData.requirement"
-            ></el-input>
-          </el-form-item>
+        <el-form-item label="岗位要求" label-position="top">
+          <el-input
+            type="textarea"
+            :rows="10"
+            v-model="editFormData.requirement"
+          ></el-input>
+        </el-form-item>
 
-          <el-form-item label="简历投递" label-position="top">
-            <el-input
-              v-model="editFormData.email"
-              placeholder="请输入邮箱"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-        <div class="confirm-button">
-          <el-button type="primary" @click="handleConfirm">确定</el-button>
-        </div>
-      </el-drawer>
-    </div>
+        <el-form-item label="简历投递" label-position="top">
+          <el-input
+            v-model="editFormData.email"
+            placeholder="请输入邮箱"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div class="confirm-button">
+        <el-button type="primary" @click="handleConfirm">确定</el-button>
+      </div>
+    </el-drawer>
   </el-card>
 </template>
 
@@ -297,5 +308,9 @@ defineProps({
 :deep(.el-form-item__label) {
   font-size: 18px;
   font-weight: 600;
+}
+
+:deep(.el-scrollbar) {
+  height: calc(100vh - 150px);
 }
 </style>

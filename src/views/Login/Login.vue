@@ -35,8 +35,7 @@ const handleLogin = async () => {
   try {
     loading.value = true;
     await formRef.value.validate();
-    // const res = await userLoginService(formModel.value) 这里userLoginService返回token，未定义
-    // userStore.setToken(res.data.data)
+    // 调用登录api
     ElMessage.success("登录成功");
     router.push("/");
   } catch (error) {
@@ -108,7 +107,7 @@ const handleLogin = async () => {
   .title {
     margin-bottom: 10px;
     font-size: 20px;
-    font-weight: 300;
+    font-weight: 400;
   }
 
   .el-input {
