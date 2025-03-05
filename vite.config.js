@@ -12,13 +12,21 @@ export default defineConfig({
       symbolId: "icon-[name]",
     }),
   ],
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://10.17.129.240:8080",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
   resolve: {
     alias: {
-      "@": resolve(__dirname, "src"), // 配置 @ 指向 src 目录
+      "@": resolve(__dirname, "src"),
     },
   },
   css: {
-    // 此处使 login 界面中 el-button 的 darken 函数生效
     preprocessorOptions: {
       scss: {
         logger: {
