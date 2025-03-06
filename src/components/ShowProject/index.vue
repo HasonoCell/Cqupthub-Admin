@@ -38,7 +38,9 @@ const addProject = () => {
 
 const deleteProject = () => {};
 
-const editProject = () => {};
+const editProject = () => {
+  isDrawerVisible.value = true;
+};
 
 const handleImageSuccess = () => {};
 
@@ -162,7 +164,7 @@ defineProps({
       <!-- 编辑抽屉 -->
       <el-drawer
         v-model="isDrawerVisible"
-        :size="'50%'"
+        :size="'30%'"
         direction="rtl"
         :with-header="false"
       >

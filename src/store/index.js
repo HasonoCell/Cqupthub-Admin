@@ -7,7 +7,7 @@ export default pinia
 
 import { useUserStore } from "./modules/user"
 import { useDepartmentStore } from "./modules/department"
-import { useJobStore } from "./modules/job"
+import { usePositionStore } from "./modules/position"
 import { useImageStore } from "./modules/image"
 
-export { useUserStore, useDepartmentStore, useJobStore, useImageStore }
+export { useUserStore, useDepartmentStore, usePositionStore, useImageStore }

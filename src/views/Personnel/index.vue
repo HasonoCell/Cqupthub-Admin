@@ -1,10 +1,10 @@
 <script setup>
 import DepartManage from "@/components/DepartManage/index.vue";
-import JobRecruit from "@/components/JobRecruit/index.vue";
+import PositionRecruit from "@/components/PositionRecruit/index.vue";
 import { ref } from "vue";
 const activeButton = ref("departManage");
 const toggleTab = () => {
-  activeButton.value === "departManage" ? "jobRecruit" : "departManage";
+  activeButton.value === "departManage" ? "positionRecruit" : "departManage";
 };
 </script>
 
@@ -15,11 +15,11 @@ const toggleTab = () => {
     @change="toggleTab"
   >
     <el-radio-button value="departManage">部门管理</el-radio-button>
-    <el-radio-button value="jobRecruit">岗位招聘</el-radio-button>
+    <el-radio-button value="positionRecruit">岗位招聘</el-radio-button>
   </el-radio-group>
 
   <DepartManage :activeButton="activeButton"></DepartManage>
-  <JobRecruit :activeButton="activeButton"></JobRecruit>
+  <PositionRecruit :activeButton="activeButton"></PositionRecruit>
 </template>
 
 <style scoped lang="scss">

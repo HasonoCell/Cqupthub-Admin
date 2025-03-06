@@ -71,4 +71,20 @@ const router = createRouter({
   routes,
 });
 
+// router.beforeEach((to, from, next) => {
+//   const userStore = useUserStore()
+
+//   // 已登录且尝试访问登录页
+//   if (userStore.token && to.path === '/login') {
+//     return next('/')
+//   }
+
+//   // 未登录且访问非登录页
+//   if (!userStore.token && to.path !== '/login') {
+//     return next('/login')
+//   }
+
+//   next()
+// })
+
 export default router;

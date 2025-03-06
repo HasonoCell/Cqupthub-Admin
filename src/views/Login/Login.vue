@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useUserStore } from "../../store";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
+import { userLoginService } from "../../api/user";
 
 const formModel = ref({
   username: "",
@@ -35,11 +36,12 @@ const handleLogin = async () => {
   try {
     loading.value = true;
     await formRef.value.validate();
-    // 调用登录api
+    const res = await userLoginService(formModel.value);
+    userStore.setToken(res.data);
     ElMessage.success("登录成功");
-    router.push("/");
+    router.push({ path: "/" });
   } catch (error) {
-    ElMessage.error(error.message);
+    ElMessage.error("用户名或密码错误");
   } finally {
     loading.value = false;
   }
@@ -55,12 +57,14 @@ const handleLogin = async () => {
         <el-form :model="formModel" :rules="rules" ref="formRef">
           <el-form-item prop="username">
             <el-input
+              @keyup.enter="handleLogin"
               placeholder="请输入用户名"
               v-model="formModel.username"
             ></el-input>
           </el-form-item>
           <el-form-item prop="password">
             <el-input
+              @keyup.enter="handleLogin"
               placeholder="请输入密码"
               v-model="formModel.password"
             ></el-input>

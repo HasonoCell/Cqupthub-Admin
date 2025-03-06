@@ -1,23 +1,26 @@
 <script setup>
 import PageCard from "@/components/PageCard/index.vue";
 import { Plus } from "@element-plus/icons-vue";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { useDepartmentStore } from "@/store/modules/department";
+import {
+  addDepartmentService,
+  editDepartmentService,
+  deleteDepartmentService,
+} from "@/api/department";
 
-const persons = ref([
-  {
-    department: "产品策划及运营部",
-    name: "王美力",
-  },
-  {
-    department: "前端开发部",
-    name: "陈波",
-  },
-  {
-    department: "后端开发部",
-    name: "钟雨廷",
-  },
-]);
+const formRef = ref();
+
+const departmentStore = useDepartmentStore();
+
+onMounted(async () => {
+  await departmentStore.getDepart();
+});
+
+const departments = computed(() => departmentStore.departments);
+
+const displayedDepartments = computed(() => departments.value.slice(0, 8));
 
 const isDrawerVisible = ref(false);
 
@@ -29,36 +32,79 @@ const editFormData = ref({
   personIntro: "",
 });
 
-const displayedPersons = computed(() => persons.value.slice(0, 8));
-
-const editDepart = () => {
-  // 调用编辑api
-  isDrawerVisible.value = true;
+const rules = {
+  departName: [
+    { required: true, message: "请输入部门名称", trigger: "blur" },
+    {
+      min: 3,
+      max: 10,
+      message: "部门名称必须包含3-10位的字符",
+      trigger: "blur",
+    },
+  ],
+  personName: [
+    { required: true, message: "请输入部长名称", trigger: "blur" },
+    {
+      min: 2,
+      max: 10,
+      message: "部长名称必须包含至少2位的字符",
+      trigger: "blur",
+    },
+  ],
+  email: [
+    { required: true, message: "请输入邮箱账号", trigger: "blur" },
+    {
+      pattern: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
+      message: "邮箱格式不正确",
+      trigger: "blur",
+    },
+  ],
+  personIntro: [],
 };
 
-const deleteDepart = async (index) => {
-  await ElMessageBox.confirm("你确定删除该部门信息吗？", "温馨提示", {
-    type: "warning",
-    confirmButtonText: "确认",
-    cancelButtonText: "取消",
-  });
-  // 调用删除api
-  ElMessage.success("删除成功");
-  persons.value.splice(index, 1);
-};
+const editDepart = () => {};
 
-const addDepart = () => {
-  // 调用增加api
-  if (persons.value.length < 8) {
-    persons.value.push({
-      department: "新部门",
-      name: "新成员",
+const deleteDepart = async (ID) => {
+  try {
+    await ElMessageBox.confirm("确定删除该部门吗？", "警告", {
+      type: "warning",
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
     });
+    await deleteDepartmentService(ID);
+    await departmentStore.getDepart();
+    ElMessage.success("删除成功");
+  } catch (error) {
+    if (error !== "cancel") {
+      ElMessage.error("删除失败");
+    }
+  }
+};
+
+const addDepart = async () => {
+  try {
+    await formRef.value.validate();
+
+    const formData = new FormData();
+    formData.append("departName", editFormData.value.departName);
+    formData.append("personName", editFormData.value.personName);
+    formData.append("email", editFormData.value.email);
+    formData.append("personIntro", editFormData.value.personIntro);
+
+    await addDepartmentService(formData);
+    await departmentStore.getDepart();
+    ElMessage.success("添加成功");
+    isDrawerVisible.value = false;
+    formRef.value.resetFields();
+  } catch (error) {
+    console.error("添加请求失败:", error.response || error);
+    ElMessage.error("添加失败");
   }
 };
 
 const handleAvatarSuccess = () => {};
 
+// 添加文件类型校验
 const beforeAvatarUpload = () => {};
 
 const handleConfirm = () => {};
@@ -75,8 +121,8 @@ defineProps({
       <!-- 部长信息展示 -->
       <el-row :gutter="20" class="card-container">
         <el-col
-          v-for="(person, index) in displayedPersons"
-          :key="index"
+          v-for="department in displayedDepartments"
+          :key="department.ID"
           :xs="24"
           :sm="12"
           :md="8"
@@ -86,21 +132,22 @@ defineProps({
           <el-card shadow="hover" class="depart-card">
             <div class="info-card-content">
               <div class="infro-avatar">
-                <img :src="person.avatar" alt="Avatar" v-if="person.avatar" />
+                <img
+                  :src="department.personAvatar"
+                  alt="Avatar"
+                  v-if="department.personAvatar"
+                />
                 <div class="avatar-placeholder" v-else></div>
               </div>
-              <p class="department">{{ person.department }}</p>
-              <p class="name">{{ person.name }}</p>
+              <p class="department">{{ department.departName }}</p>
+              <p class="name">{{ department.personName }}</p>
               <div class="actions">
-                <el-tag 
-                  type="primary" 
-                  @click="editDepart()" 
-                  class="action-tag"
+                <el-tag type="primary" @click="editDepart()" class="action-tag"
                   >编辑</el-tag
                 >
                 <el-tag
                   type="danger"
-                  @click="deleteDepart(index)"
+                  @click="deleteDepart(department.ID)"
                   class="action-tag"
                   >删除</el-tag
                 >
@@ -111,7 +158,7 @@ defineProps({
 
         <!-- 添加部门卡片 -->
         <el-col
-          v-if="persons.length < 8"
+          v-if="departments.length < 8"
           :xs="24"
           :sm="12"
           :md="8"
@@ -119,9 +166,9 @@ defineProps({
           class="card-column"
         >
           <el-card shadow="hover" class="add-card">
-            <div class="add-card-content" @click="addDepart">
+            <div class="add-card-content" @click="isDrawerVisible = true">
               <el-button class="custom-add-button" :icon="Plus">
-                添加项目
+                添加部门
               </el-button>
             </div>
           </el-card>
@@ -136,12 +183,17 @@ defineProps({
   <!-- 编辑区域 -->
   <el-drawer
     v-model="isDrawerVisible"
-    :size="'50%'"
+    :size="'30%'"
     direction="rtl"
     :with-header="false"
   >
-    <el-form label-width="120px" :model="editFormData">
-      <el-form-item label="部门名称:" label-position="top">
+    <el-form
+      label-width="120px"
+      :model="editFormData"
+      :rules="rules"
+      ref="formRef"
+    >
+      <el-form-item label="部门名称:" label-position="top" prop="departName">
         <el-input v-model="editFormData.departName" />
       </el-form-item>
 
@@ -165,15 +217,15 @@ defineProps({
         </div>
       </el-form-item>
 
-      <el-form-item label="部长姓名:" label-position="top">
+      <el-form-item label="部长姓名:" label-position="top" prop="personName">
         <el-input v-model="editFormData.personName" />
       </el-form-item>
 
-      <el-form-item label="部长邮箱:" label-position="top">
+      <el-form-item label="部长邮箱:" label-position="top" prop="email">
         <el-input v-model="editFormData.email" />
       </el-form-item>
 
-      <el-form-item label="部长介绍:" label-position="top">
+      <el-form-item label="部长介绍:" label-position="top" prop="personIntro">
         <el-input
           v-model="editFormData.personIntro"
           type="textarea"
@@ -181,7 +233,9 @@ defineProps({
         />
       </el-form-item>
       <div class="confirm-button">
-        <el-button color="#000" type="primary">确定</el-button>
+        <el-button color="#000" type="primary" @click="addDepart"
+          >确定</el-button
+        >
       </div>
     </el-form>
   </el-drawer>

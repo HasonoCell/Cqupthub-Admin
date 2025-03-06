@@ -2,12 +2,13 @@
 import PageCard from "@/components/PageCard/index.vue";
 import { ref } from "vue";
 import { ElMessage } from "element-plus";
+import { userChangePWDService } from "../../api/user";
 
 const formModel = ref({
   username: "",
   password: "",
-  newPwd: "",
-  reNewPwd: "",
+  newPassword: "",
+  reNewPassword: "",
 });
 const rules = {
   username: [
@@ -15,7 +16,7 @@ const rules = {
     { min: 5, max: 10, message: "用户名必须是5-10位的字符", trigger: "blur" },
   ],
   password: [{ required: true, message: "请输入原密码", trigger: "blur" }],
-  newPwd: [
+  newPassword: [
     { required: true, message: "请输入新密码", trigger: "blur" },
     {
       pattern: /^\S{6,15}$/,
@@ -33,7 +34,7 @@ const rules = {
       trigger: "blur",
     },
   ],
-  reNewPwd: [
+  reNewPassword: [
     { required: true, message: "请再次输入新密码", trigger: "blur" },
     {
       pattern: /^\S{6,15}$/,
@@ -42,7 +43,7 @@ const rules = {
     },
     {
       validator: (rule, value, callback) => {
-        if (value !== formModel.value.newPwd) {
+        if (value !== formModel.value.newPassword) {
           callback(new Error("两次输入密码不一致"));
         } else {
           callback();
@@ -52,15 +53,16 @@ const rules = {
     },
   ],
 };
+
 const formRef = ref();
 const handleChange = async () => {
   try {
-    await formRef.value.validate()
-    // 这里添加调用更新密码接口的逻辑
-    console.log("验证通过，开始提交...")
-    ElMessage.success('密码更新成功')
+    await formRef.value.validate();
+    await userChangePWDService(formModel.value)
+    ElMessage.success("密码更新成功");
+    formRef.value.resetFields()
   } catch (error) {
-    console.error('操作失败:', error)
+    ElMessage.error("请正确填写信息");
   }
 };
 </script>
@@ -87,11 +89,15 @@ const handleChange = async () => {
                 v-model="formModel.username"
               ></el-input>
             </el-form-item>
-            <el-form-item label="新密码" label-position="top" prop="newPwd">
+            <el-form-item
+              label="新密码"
+              label-position="top"
+              prop="newPassword"
+            >
               <el-input
                 type="password"
                 placeholder="请输入新密码"
-                v-model="formModel.newPwd"
+                v-model="formModel.newPassword"
               ></el-input>
             </el-form-item>
           </div>
@@ -106,12 +112,12 @@ const handleChange = async () => {
             <el-form-item
               label="确认新密码"
               label-position="top"
-              prop="reNewPwd"
+              prop="reNewPassword"
             >
               <el-input
                 type="password"
                 placeholder="请再次输入新密码"
-                v-model="formModel.reNewPwd"
+                v-model="formModel.reNewPassword"
               ></el-input>
             </el-form-item>
           </div>
