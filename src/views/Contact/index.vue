@@ -41,7 +41,9 @@ const handleChange = async () => {
 
 <template>
   <PageCard>
-    <template #header>联系方式设置</template>
+    <template #header>
+      <span>联系方式设置</span>
+    </template>
     <template #default>
       <el-form label-width="auto" style="width: 100%"
       :model="formModel" :rules="rules" ref="formRef">
@@ -86,5 +88,10 @@ const handleChange = async () => {
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+
+:deep(.el-form-item__label) {
+  font-size: 18px;
+  font-weight: 600;
 }
 </style>

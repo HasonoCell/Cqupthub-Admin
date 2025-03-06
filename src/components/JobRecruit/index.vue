@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { Plus } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 const jobCategories = ref([
   {
@@ -68,14 +69,20 @@ const jobCategories = ref([
 ]);
 
 const expandedCategories = ref([]);
-const hoverCategory = ref(null);
+
+const hoverDepart = ref(null);
+
 const hoverJob = ref(null);
+
 const isDrawerVisible = ref(false);
+
 const editFormData = ref({
-  name: "",
-  requirements: "",
-  email: "",
+  belongTo: "",
+  positionName: "",
+  requirement: "",
+  deliveryEmail: "",
 });
+
 const selectedJob = ref(null);
 
 const toggleExpand = (index) => {
@@ -87,26 +94,33 @@ const toggleExpand = (index) => {
   }
 };
 
-const openEditDrawer = (categoryId, jobId) => {
+const editJob = (categoryId, jobId) => {
+  // 调用编辑api
   const category = jobCategories.value.find((cate) => cate.id === categoryId);
   selectedJob.value = category.jobs.find((job) => job.id === jobId);
   editFormData.value = { ...selectedJob.value };
   isDrawerVisible.value = true;
 };
 
-const handleConfirm = () => {
-  selectedJob.value.name = editFormData.value.name;
-  selectedJob.value.requirements = editFormData.value.requirements;
-  selectedJob.value.email = editFormData.value.email;
-  isDrawerVisible.value = false;
-};
-
-const deleteJob = (categoryId, jobId) => {
+const deleteJob = async (categoryId, jobId) => {
+  await ElMessageBox.confirm("你确定删除该部门信息吗？", "温馨提示", {
+    type: "warning",
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+  });
+  // 调用删除api
+  ElMessage.success("删除成功");
   const category = jobCategories.value.find((cat) => cat.id === categoryId);
   if (category) {
     category.jobs = category.jobs.filter((job) => job.id !== jobId);
   }
 };
+
+const addJob = () => {
+  // 调用增加api
+};
+
+const handleConfirm = () => {};
 
 defineProps({
   activeButton: String,
@@ -115,20 +129,16 @@ defineProps({
 
 <template>
   <el-card v-if="activeButton === 'jobRecruit'">
-    <div class="job-recruitment">
-      <!-- 滚动区域 -->
-      <el-scrollbar style="max-height: 800px; overflow-y: auto">
-        <div
-          v-for="(category, index) in jobCategories"
-          :key="category.id"
-          class="job-category"
-        >
-          <!-- 岗位大类 -->
+    <!-- 滚动区域 -->
+    <el-scrollbar height="calc(100vh - 150px)" always>
+      <div class="scroll-content">
+        <div v-for="(category, index) in jobCategories" :key="category.id">
+          <!-- 部门信息 -->
           <div
-            class="category-header"
-            @mouseenter="hoverCategory = index"
-            @mouseleave="hoverCategory = null"
-            :class="{ 'hovered-category': hoverCategory === index }"
+            class="depart-header"
+            @mouseenter="hoverDepart = index"
+            @mouseleave="hoverDepart = null"
+            :class="{ 'hovered-depart': hoverDepart === index }"
           >
             <span>{{ category.name }}</span>
             <el-button
@@ -140,7 +150,7 @@ defineProps({
             ></el-button>
           </div>
 
-          <!-- 细分岗位 -->
+          <!-- 岗位内容 -->
           <el-collapse-transition>
             <div v-if="expandedCategories.includes(index)" class="sub-jobs">
               <div
@@ -158,7 +168,7 @@ defineProps({
                     icon="edit"
                     color="#fff"
                     circle
-                    @click="openEditDrawer(category.id, job.id)"
+                    @click="editJob(category.id, job.id)"
                   ></el-button>
                   <el-button
                     type="danger"
@@ -171,57 +181,58 @@ defineProps({
             </div>
           </el-collapse-transition>
         </div>
-      </el-scrollbar>
+      </div>
+    </el-scrollbar>
 
-      <!-- 编辑抽屉 -->
-      <el-drawer
-        v-model="isDrawerVisible"
-        :size="'50%'"
-        direction="rtl"
-        :with-header="false"
-        :show-close="false"
-      >
-        <el-form :model="editFormData" label-width="80px">
-          <el-form-item label="岗位名称" label-position="top">
-            <el-input
-              v-model="editFormData.name"
-              placeholder="请输入岗位名称"
-            ></el-input>
-          </el-form-item>
+    <!-- 编辑抽屉 -->
+    <el-drawer
+      v-model="isDrawerVisible"
+      :size="'50%'"
+      direction="rtl"
+      :with-header="false"
+      :show-close="false"
+    >
+      <el-form :model="editFormData" label-width="80px">
+        <el-form-item label="岗位名称" label-position="top">
+          <el-input
+            v-model="editFormData.positionName"
+            placeholder="请输入岗位名称"
+          ></el-input>
+        </el-form-item>
 
-          <el-form-item label="岗位要求" label-position="top">
-            <el-input
-              type="textarea"
-              v-model="editFormData.requirements"
-            ></el-input>
-          </el-form-item>
+        <el-form-item label="岗位要求" label-position="top">
+          <el-input
+            type="textarea"
+            :rows="10"
+            v-model="editFormData.requirement"
+          ></el-input>
+        </el-form-item>
 
-          <el-form-item label="简历投递" label-position="top">
-            <el-input
-              v-model="editFormData.email"
-              placeholder="请输入邮箱"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-
-        <el-button @click="isDrawerVisible = false">取消</el-button>
+        <el-form-item label="简历投递" label-position="top">
+          <el-input
+            v-model="editFormData.email"
+            placeholder="请输入邮箱"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div class="confirm-button">
         <el-button type="primary" @click="handleConfirm">确定</el-button>
-      </el-drawer>
-    </div>
+      </div>
+    </el-drawer>
   </el-card>
 </template>
 
 <style scoped>
 .el-card {
-  height: 100vh;
+  height: auto;
+  min-height: 100vh;
 }
 
-.job-recruitment {
+.scroll-content {
   padding: 16px;
 }
 
-/* 岗位大类行样式 */
-.category-header {
+.depart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -249,7 +260,7 @@ defineProps({
   }
 }
 
-.category-header.hovered-category {
+.depart-header.hovered-depart {
   background-color: #ccc;
   color: #111;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
@@ -261,6 +272,7 @@ defineProps({
 
 /* 子岗位列表 */
 .sub-jobs {
+  overflow: hidden;
   padding-left: 20px;
 }
 
@@ -286,5 +298,19 @@ defineProps({
 
 .actions {
   display: flex;
+}
+
+.confirm-button {
+  display: flex;
+  justify-content: flex-end;
+}
+
+:deep(.el-form-item__label) {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+:deep(.el-scrollbar) {
+  height: calc(100vh - 150px);
 }
 </style>

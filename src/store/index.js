@@ -6,4 +6,8 @@ pinia.use(persist)
 export default pinia
 
 import { useUserStore } from "./modules/user"
-export { useUserStore }
+import { useDepartmentStore } from "./modules/department"
+import { useJobStore } from "./modules/job"
+import { useImageStore } from "./modules/image"
+
+export { useUserStore, useDepartmentStore, useJobStore, useImageStore }
