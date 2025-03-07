@@ -1,41 +1,41 @@
 <template>
-  <el-card  shadow="never">
+  <el-card shadow="never">
     <template #header>
-        <div class="card-header">
-            <slot name="header"></slot>
-        </div>
+      <div class="card-header">
+        <slot name="header"></slot>
+      </div>
     </template>
     <div class="card-main">
-        <slot></slot>    
+      <slot></slot>
     </div>
     <template #footer>
-        <div class="card-footer">
-            <slot name="footer"></slot>
-        </div>
+      <div class="card-footer">
+        <slot name="footer"></slot>
+      </div>
     </template>
   </el-card>
 </template>
 
 <style scoped lang="scss">
 .card-header {
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-  }
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+}
 
 .card-footer {
-    display: flex;
-    justify-content: end;
+  display: flex;
+  justify-content: end;
 }
 
 .el-card {
-    height: 100%;
+  height: 100%;
 }
 
 :deep(.el-card__header) {
-    border-bottom: none
+  border-bottom: none;
 }
 :deep(.el-card__footer) {
-    border-top: none;
+  border-top: none;
 }
 </style>

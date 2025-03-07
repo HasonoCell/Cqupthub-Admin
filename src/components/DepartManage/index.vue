@@ -24,6 +24,10 @@ const displayedDepartments = computed(() => departments.value.slice(0, 8));
 
 const isDrawerVisible = ref(false);
 
+const isEdit = ref(false);
+
+const currentId = ref(null);
+
 const editFormData = ref({
   departName: "",
   personAvatar: "",
@@ -62,26 +66,57 @@ const rules = {
   personIntro: [],
 };
 
-const editDepart = () => {};
+const editDepart = (ID, department) => {
+  isEdit.value = true;
+  currentId.value = ID;
+  isDrawerVisible.value = true;
 
-const deleteDepart = async (ID) => {
+  editFormData.value = {
+    departName: department.departName,
+    personAvatar: department.personAvatar,
+    personName: department.personName,
+    email: department.email,
+    personIntro: department.personIntro,
+  };
+};
+
+const editDepartSubmit = async () => {
   try {
-    await ElMessageBox.confirm("确定删除该部门吗？", "警告", {
-      type: "warning",
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-    });
-    await deleteDepartmentService(ID);
+    await formRef.value.validate();
+
+    const formData = new FormData();
+    formData.append("ID", currentId.value);
+    formData.append("departName", editFormData.value.departName);
+    formData.append("personName", editFormData.value.personName);
+    formData.append("email", editFormData.value.email);
+    formData.append("personIntro", editFormData.value.personIntro);
+
+    await editDepartmentService(currentId.value, formData);
     await departmentStore.getDepart();
-    ElMessage.success("删除成功");
+    ElMessage.success("修改成功");
+    isDrawerVisible.value = false;
+    formRef.value.resetFields();
   } catch (error) {
-    if (error !== "cancel") {
-      ElMessage.error("删除失败");
-    }
+    console.error("编辑请求失败:", error.response || error);
+    ElMessage.error("修改失败");
   }
 };
 
-const addDepart = async () => {
+const addDepart = () => {
+  isEdit.value = false;
+  isDrawerVisible.value = true;
+  formRef.value?.resetFields();
+
+  editFormData.value = {
+    departName: "",
+    personName: "",
+    email: "",
+    personAvatar: "",
+    personIntro: "",
+  };
+};
+
+const addDepartSubmit = async () => {
   try {
     await formRef.value.validate();
 
@@ -102,12 +137,27 @@ const addDepart = async () => {
   }
 };
 
+const deleteDepart = async (ID) => {
+  try {
+    await ElMessageBox.confirm("确定删除该部门吗？", "警告", {
+      type: "warning",
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+    });
+    await deleteDepartmentService(ID);
+    await departmentStore.getDepart();
+    ElMessage.success("删除成功");
+  } catch (error) {
+    if (error !== "cancel") {
+      ElMessage.error("删除失败");
+    }
+  }
+};
+
 const handleAvatarSuccess = () => {};
 
 // 添加文件类型校验
 const beforeAvatarUpload = () => {};
-
-const handleConfirm = () => {};
 
 defineProps({
   activeButton: String,
@@ -133,8 +183,8 @@ defineProps({
             <div class="info-card-content">
               <div class="infro-avatar">
                 <img
-                  :src="department.personAvatar"
-                  alt="Avatar"
+                  :src="department.personName"
+                  alt="图片加载失败"
                   v-if="department.personAvatar"
                 />
                 <div class="avatar-placeholder" v-else></div>
@@ -142,7 +192,10 @@ defineProps({
               <p class="department">{{ department.departName }}</p>
               <p class="name">{{ department.personName }}</p>
               <div class="actions">
-                <el-tag type="primary" @click="editDepart()" class="action-tag"
+                <el-tag
+                  type="primary"
+                  @click="editDepart(department.ID, department)"
+                  class="action-tag"
                   >编辑</el-tag
                 >
                 <el-tag
@@ -166,7 +219,7 @@ defineProps({
           class="card-column"
         >
           <el-card shadow="hover" class="add-card">
-            <div class="add-card-content" @click="isDrawerVisible = true">
+            <div class="add-card-content" @click="addDepart">
               <el-button class="custom-add-button" :icon="Plus">
                 添加部门
               </el-button>
@@ -176,12 +229,13 @@ defineProps({
       </el-row>
     </template>
     <template #footer>
-      <el-button color="#000" @click="handleConfirm">保存更改</el-button>
+      <el-button color="#000" @click="">保存更改</el-button>
     </template>
   </PageCard>
 
   <!-- 编辑区域 -->
   <el-drawer
+    :title="isEdit ? '编辑部门' : '添加部门'"
     v-model="isDrawerVisible"
     :size="'30%'"
     direction="rtl"
@@ -233,7 +287,10 @@ defineProps({
         />
       </el-form-item>
       <div class="confirm-button">
-        <el-button color="#000" type="primary" @click="addDepart"
+        <el-button
+          color="#000"
+          type="primary"
+          @click="isEdit ? editDepartSubmit() : addDepartSubmit()"
           >确定</el-button
         >
       </div>

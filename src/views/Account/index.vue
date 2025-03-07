@@ -58,9 +58,9 @@ const formRef = ref();
 const handleChange = async () => {
   try {
     await formRef.value.validate();
-    await userChangePWDService(formModel.value)
+    await userChangePWDService(formModel.value);
     ElMessage.success("密码更新成功");
-    formRef.value.resetFields()
+    formRef.value.resetFields();
   } catch (error) {
     ElMessage.error("请正确填写信息");
   }

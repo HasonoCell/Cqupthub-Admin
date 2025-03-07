@@ -14,11 +14,13 @@ const departmentStore = useDepartmentStore();
 
 const positionStore = usePositionStore();
 
-const hoverDepartment = ref(null);
-
-const hoverPosition = ref(null);
-
 const isDrawerVisible = ref(false);
+
+const isEdit = ref(false);
+
+const currentID = ref(null);
+
+const formRef = ref();
 
 const editFormData = ref({
   belong_to: "",
@@ -27,6 +29,28 @@ const editFormData = ref({
   deliveryEmail: "",
 });
 
+const rules = {
+  positionName: [
+    { required: true, message: "请输入岗位名称", trigger: "blur" },
+    {
+      min: 2,
+      max: 10,
+      message: "部门名称必须包含2-10位的字符",
+      trigger: "blur",
+    },
+  ],
+  requirement: [{ required: true, message: "请输入需求", trigger: "blur" }],
+  deliveryEmail: [
+    { required: true, message: "请输入邮箱账号", trigger: "blur" },
+    {
+      pattern: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
+      message: "邮箱格式不正确",
+      trigger: "blur",
+    },
+  ],
+  personIntro: [],
+};
+
 onMounted(async () => {
   await departmentStore.getDepart();
   await positionStore.getPosition();
@@ -34,9 +58,6 @@ onMounted(async () => {
 
 const departments = computed(() => departmentStore.departments);
 const positions = computed(() => positionStore.positions);
-// 编辑岗位
-const editPosition = async (ID) => {};
-
 // 删除岗位
 const deletePosition = async (ID) => {
   try {
@@ -54,11 +75,61 @@ const deletePosition = async (ID) => {
   }
 };
 
-// 新增岗位
-const addPosition = async () => {
+// 编辑岗位
+const editPosition = (ID, position) => {
+  isEdit.value = true;
+  isDrawerVisible.value = true;
+  currentID.value = ID;
+
+  editFormData.value = {
+    belong_to: position.belong_to,
+    positionName: position.positionName,
+    requirement: position.requirement,
+    deliveryEmail: position.deliveryEmail,
+  };
+};
+
+const editPositionSubmit = async () => {
   try {
-    console.log("add...");
-  } catch {}
+    console.log("try....");
+    await formRef.value.validate();
+    await editPositionService(currentID.value, editFormData.value);
+    await positionStore.getPosition();
+    ElMessage.success("修改成功");
+    isDrawerVisible.value = false;
+    formRef.value.resetFields();
+  } catch (error) {
+    console.error("编辑请求失败:", error.response || error);
+    ElMessage.error("修改失败");
+  }
+};
+
+// 新增岗位
+const addPosition = () => {
+  isEdit.value = false;
+  isDrawerVisible.value = true;
+  formRef.value?.resetFields();
+
+  editFormData.value = {
+    belong_to: "",
+    positionName: "",
+    requirement: "",
+    deliveryEmail: "",
+  };
+};
+
+const addPositionSubmit = async () => {
+  try {
+    await formRef.value.validate();
+    await addPositionService(editFormData.value);
+    await positionStore.getPosition();
+    ElMessage.success("新增成功");
+    isDrawerVisible.value = false;
+    formRef.value.resetFields();
+  } catch (error) {
+    console.error("新增请求失败:", error.response || error);
+    ElMessage.error("新增失败");
+  }
 };
 
 // 提交表单
@@ -109,7 +180,7 @@ defineProps({
                     icon="edit"
                     color="#fff"
                     circle
-                    @click="editPosition(position.ID)"
+                    @click="editPosition(position.ID, position)"
                   ></el-button>
                   <el-button
                     type="danger"
@@ -133,15 +204,20 @@ defineProps({
       :with-header="false"
       :show-close="false"
     >
-      <el-form :model="editFormData" label-width="80px">
-        <el-form-item label="岗位名称" label-position="top">
+      <el-form
+        :model="editFormData"
+        :rules="rules"
+        ref="formRef"
+        label-width="80px"
+      >
+        <el-form-item label="岗位名称" label-position="top" prop="positionName">
           <el-input
             v-model="editFormData.positionName"
             placeholder="请输入岗位名称"
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="岗位要求" label-position="top">
+        <el-form-item label="岗位要求" label-position="top" prop="requirement">
           <el-input
             type="textarea"
             :rows="10"
@@ -149,17 +225,26 @@ defineProps({
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="简历投递" label-position="top">
+        <el-form-item
+          label="简历投递"
+          label-position="top"
+          prop="deliveryEmail"
+        >
           <el-input
-            v-model="editFormData.email"
+            v-model="editFormData.deliveryEmail"
             placeholder="请输入邮箱"
           ></el-input>
         </el-form-item>
       </el-form>
       <div class="confirm-button">
-        <el-button type="primary" @click="handleConfirm">确定</el-button>
+        <el-button
+          type="primary"
+          @click="isEdit ? editPositionSubmit() : addPositionSubmit()"
+          >确定</el-button
+        >
       </div>
     </el-drawer>
+    <el-button @click="addPosition">增加功能测试按钮</el-button>
   </el-card>
 </template>
 

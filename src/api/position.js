@@ -8,10 +8,10 @@ export const getPositionService = () => {
     return service.get("/position/acquire")
 }
 
-export const editPositionService = (id, data) => {
-    return service.put(`/position/edit/${id}`, data)
+export const editPositionService = (ID, data) => {
+    return service.put(`/position/edit/${ID}`, data)
 }
 
-export const deletePositionService = (id) => {
-    return service.delete(`/position/delete/${id}`)
+export const deletePositionService = (ID) => {
+    return service.delete(`/position/delete/${ID}`)
 }

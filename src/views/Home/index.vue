@@ -1,5 +1,5 @@
 <script setup>
-  import PageCard from "@/components/PageCard/index.vue";
+import PageCard from "@/components/PageCard/index.vue";
 </script>
 
 <template>

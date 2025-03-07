@@ -1,6 +1,6 @@
 <script setup>
-import ShowProject from "@/components/ShowProject/index.vue"
-import ShowGame from "@/components/ShowGame/index.vue"
+import ShowProject from "@/components/ShowProject/index.vue";
+import ShowGame from "@/components/ShowGame/index.vue";
 import { ref } from "vue";
 const activeButton = ref("project");
 const toggleTab = () => {
