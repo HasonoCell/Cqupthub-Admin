@@ -8,24 +8,18 @@ import {
   addDepartmentService,
   editDepartmentService,
   deleteDepartmentService,
-} from "@/api/department";
+} from "../../api/department";
 
-const formRef = ref();
-
-const departmentStore = useDepartmentStore();
-
-onMounted(async () => {
-  await departmentStore.getDepart();
+defineProps({
+  activeButton: String,
 });
 
+const formRef = ref();
+const departmentStore = useDepartmentStore();
 const departments = computed(() => departmentStore.departments);
-
 const displayedDepartments = computed(() => departments.value.slice(0, 8));
-
 const isDrawerVisible = ref(false);
-
 const isEdit = ref(false);
-
 const currentId = ref(null);
 
 const editFormData = ref({
@@ -34,6 +28,7 @@ const editFormData = ref({
   personName: "",
   email: "",
   personIntro: "",
+  previewImage: "",
 });
 
 const rules = {
@@ -63,7 +58,6 @@ const rules = {
       trigger: "blur",
     },
   ],
-  personIntro: [],
 };
 
 const editDepart = (ID, department) => {
@@ -83,21 +77,19 @@ const editDepart = (ID, department) => {
 const editDepartSubmit = async () => {
   try {
     await formRef.value.validate();
-
+    ElMessage.info("上传中，请耐心等待");
     const formData = new FormData();
-    formData.append("ID", currentId.value);
     formData.append("departName", editFormData.value.departName);
     formData.append("personName", editFormData.value.personName);
     formData.append("email", editFormData.value.email);
     formData.append("personIntro", editFormData.value.personIntro);
-
+    formData.append("image", editFormData.value.personAvatar);
     await editDepartmentService(currentId.value, formData);
     await departmentStore.getDepart();
     ElMessage.success("修改成功");
     isDrawerVisible.value = false;
     formRef.value.resetFields();
   } catch (error) {
-    console.error("编辑请求失败:", error.response || error);
     ElMessage.error("修改失败");
   }
 };
@@ -119,20 +111,18 @@ const addDepart = () => {
 const addDepartSubmit = async () => {
   try {
     await formRef.value.validate();
-
     const formData = new FormData();
     formData.append("departName", editFormData.value.departName);
     formData.append("personName", editFormData.value.personName);
     formData.append("email", editFormData.value.email);
     formData.append("personIntro", editFormData.value.personIntro);
-
+    formData.append("image", editFormData.value.personAvatar);
     await addDepartmentService(formData);
     await departmentStore.getDepart();
     ElMessage.success("添加成功");
     isDrawerVisible.value = false;
     formRef.value.resetFields();
   } catch (error) {
-    console.error("添加请求失败:", error.response || error);
     ElMessage.error("添加失败");
   }
 };
@@ -154,13 +144,14 @@ const deleteDepart = async (ID) => {
   }
 };
 
-const handleAvatarSuccess = () => {};
+const onUploadFile = (file) => {
+  const previewURL = URL.createObjectURL(file.raw);
+  editFormData.value.personAvatar = file.raw;
+  editFormData.value.previewImage = previewURL;
+};
 
-// 添加文件类型校验
-const beforeAvatarUpload = () => {};
-
-defineProps({
-  activeButton: String,
+onMounted(async () => {
+  await departmentStore.getDepart();
 });
 </script>
 
@@ -179,11 +170,11 @@ defineProps({
           :lg="6"
           class="card-column"
         >
-          <el-card shadow="hover" class="depart-card">
+          <el-card class="depart-card">
             <div class="info-card-content">
               <div class="infro-avatar">
                 <img
-                  :src="department.personName"
+                  :src="'http://' + department.personAvatar"
                   alt="图片加载失败"
                   v-if="department.personAvatar"
                 />
@@ -218,7 +209,7 @@ defineProps({
           :lg="6"
           class="card-column"
         >
-          <el-card shadow="hover" class="add-card">
+          <el-card class="add-card">
             <div class="add-card-content" @click="addDepart">
               <el-button class="custom-add-button" :icon="Plus">
                 添加部门
@@ -227,9 +218,6 @@ defineProps({
           </el-card>
         </el-col>
       </el-row>
-    </template>
-    <template #footer>
-      <el-button color="#000" @click="">保存更改</el-button>
     </template>
   </PageCard>
 
@@ -254,19 +242,16 @@ defineProps({
       <el-form-item label="部长头像:" label-position="top">
         <div class="avatar-upload">
           <el-image
-            style="width: 150px; height: 150px"
-            :src="editFormData.personAvatar"
+            :src="
+              editFormData.previewImage || 'http://' + editFormData.personAvatar
+            "
           />
           <el-upload
-            class="upload-demo"
-            action="your_upload_api"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
+            :auto-upload="false"
             :show-file-list="false"
+            :on-change="onUploadFile"
           >
-            <el-button color="#000" type="primary" label-position="top"
-              >更换</el-button
-            >
+            <el-button color="#000" label-position="top">更换</el-button>
           </el-upload>
         </div>
       </el-form-item>
@@ -300,6 +285,7 @@ defineProps({
 
 <style scoped lang="scss">
 .card-container {
+  margin-top: 20px;
   display: flex;
   flex-wrap: wrap;
 }
@@ -327,7 +313,7 @@ defineProps({
 
 .depart-card:hover,
 .add-card:hover {
-  transform: scale(1.025);
+  transform: scale(1.05);
 }
 
 .info-card-content {
@@ -343,6 +329,13 @@ defineProps({
   border-radius: 50%;
   overflow: hidden;
   margin-bottom: 10px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+  }
 }
 
 .avatar img {
@@ -407,12 +400,12 @@ defineProps({
   color: #606266;
   font-size: 14px;
   transition: all 0.3s ease;
-}
 
-.custom-add-button:hover {
-  border-color: #666;
-  color: #666;
-  background-color: #f2f2f2;
+  &:hover {
+    border-color: #666;
+    color: #666;
+    background-color: #f2f2f2;
+  }
 }
 
 .confirm-button {
@@ -424,6 +417,11 @@ defineProps({
   display: flex;
   align-items: flex-end;
   gap: 20px;
+
+  .el-image {
+    width: 150px;
+    height: 150px;
+  }
 }
 
 :deep(.el-form-item__label) {

@@ -12,14 +12,13 @@
 import { computed } from "vue";
 
 const props = defineProps({
-  name: { type: String, required: true }, // 传入的 icon 名称
-  size: { type: String, default: "20px" }, // 图标大小
-  color: { type: String, default: "blue" }, // 默认颜色
+  name: { type: String, required: true },
+  size: { type: String, default: "20px" },
+  color: { type: String, default: "blue" },
   customClass: { type: String, default: "" },
 });
 
 const iconName = computed(() => `#icon-${props.name}`);
-console.log(iconName.value);
 </script>
 
 <style scoped>

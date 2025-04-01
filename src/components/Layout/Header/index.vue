@@ -1,31 +1,32 @@
-<template>
-  <div class="header-container">
-    <div class="content">
-      <el-button color="#000" @click="handleLogout">退出登录</el-button>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { useRouter } from "vue-router";
-import { useUserStore } from "../../../store";
 import { ElMessage } from "element-plus";
 
-const userStore = useUserStore();
 const router = useRouter();
+
 const handleLogout = () => {
-  userStore.removeToken();
+  localStorage.removeItem('isLoggedIn')
   router.push("/login");
   ElMessage.success("退出成功");
 };
 </script>
 
+<template>
+  <div class="header-container">
+    <div class="content">
+      <el-button type="primary" color="#000" @click="handleLogout"
+        >退出登录</el-button
+      >
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .header-container {
+  height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: end;
   align-items: center;
-  height: 100%;
-  width: 100%;
 }
 </style>

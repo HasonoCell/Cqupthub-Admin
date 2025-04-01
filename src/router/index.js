@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useUserStore } from "../store";
 const routes = [
   {
     path: "/login",
@@ -17,6 +16,7 @@ const routes = [
         name: "home",
         component: () => import("../views/Home/index.vue"),
         meta: {
+          requireAuth: true,
           title: "首页设置",
           icon: "home",
           showInMenu: true,
@@ -27,6 +27,7 @@ const routes = [
         name: "project",
         component: () => import("../views/Project/index.vue"),
         meta: {
+          requireAuth: true,
           title: "项目展示管理",
           icon: "project",
           showInMenu: true,
@@ -37,6 +38,7 @@ const routes = [
         name: "personnel",
         component: () => import("../views/Personnel/index.vue"),
         meta: {
+          requireAuth: true,
           title: "部门管理",
           icon: "personnel",
           showInMenu: true,
@@ -47,6 +49,7 @@ const routes = [
         name: "contact",
         component: () => import("../views/Contact/index.vue"),
         meta: {
+          requireAuth: true,
           title: "联系方式设置",
           icon: "contact",
           showInMenu: true,
@@ -57,6 +60,7 @@ const routes = [
         name: "account",
         component: () => import("../views/Account/index.vue"),
         meta: {
+          requireAuth: true,
           title: "账号管理",
           icon: "account",
           showInMenu: true,
@@ -71,20 +75,22 @@ const router = createRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   const userStore = useUserStore()
-
-//   // 已登录且尝试访问登录页
-//   if (userStore.token && to.path === '/login') {
-//     return next('/')
-//   }
-
-//   // 未登录且访问非登录页
-//   if (!userStore.token && to.path !== '/login') {
-//     return next('/login')
-//   }
-
-//   next()
-// })
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
+  
+  // 需要登录的路由匹配规则
+  const requiresAuth = to.matched.some(record => record.meta.requireAuth)
+  
+  if (requiresAuth && !isLoggedIn) {
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath }
+    })
+  } else if (to.path === '/login' && isLoggedIn) {
+    next('/') // 已登录时禁止访问登录页
+  } else {
+    next()
+  }
+})
 
 export default router;

@@ -4,28 +4,22 @@ import { getDepartmentService } from "../../api/department"
 import { ElMessage } from "element-plus"
 
 export const useDepartmentStore = defineStore('department', () => {
-    // 状态定义
     const departments = ref([])
-    const loading = ref(false)
     const error = ref(null)
 
     const getDepart = async () => {
         try {
-            loading.value = true
             error.value = null
             const { data } = await getDepartmentService()
             departments.value = data
         } catch (err) {
             error.value = err.message || '获取部门数据失败'
             ElMessage.error(err)
-        } finally {
-            loading.value = false
         }
     }
 
     return {
         departments,
-        loading,
         error,
         getDepart
     }

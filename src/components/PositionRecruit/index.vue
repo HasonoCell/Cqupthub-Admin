@@ -1,4 +1,5 @@
 <script setup>
+import PageCard from "../PageCard/index.vue";
 import { ref, onMounted, computed } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -7,27 +8,28 @@ import {
   addPositionService,
   editPositionService,
   deletePositionService,
-} from "@/api/position";
+} from "../../api/position";
 import { useDepartmentStore } from "../../store";
 
+defineProps({
+  activeButton: String,
+});
+
 const departmentStore = useDepartmentStore();
-
 const positionStore = usePositionStore();
-
 const isDrawerVisible = ref(false);
-
 const isEdit = ref(false);
-
 const currentID = ref(null);
-
 const formRef = ref();
-
 const editFormData = ref({
   belong_to: "",
   positionName: "",
   requirement: "",
   deliveryEmail: "",
 });
+
+const departments = computed(() => departmentStore.departments);
+const positions = computed(() => positionStore.positions);
 
 const rules = {
   positionName: [
@@ -40,24 +42,16 @@ const rules = {
     },
   ],
   requirement: [{ required: true, message: "请输入需求", trigger: "blur" }],
-  deliveryEmail: [
-    { required: true, message: "请输入邮箱账号", trigger: "blur" },
-    {
-      pattern: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
-      message: "邮箱格式不正确",
-      trigger: "blur",
-    },
-  ],
-  personIntro: [],
+  // deliveryEmail: [
+  //   { required: true, message: "请输入邮箱账号", trigger: "blur" },
+  //   {
+  //     pattern: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
+  //     message: "邮箱格式不正确",
+  //     trigger: "blur",
+  //   },
+  // ],
 };
 
-onMounted(async () => {
-  await departmentStore.getDepart();
-  await positionStore.getPosition();
-});
-
-const departments = computed(() => departmentStore.departments);
-const positions = computed(() => positionStore.positions);
 // 删除岗位
 const deletePosition = async (ID) => {
   try {
@@ -66,7 +60,7 @@ const deletePosition = async (ID) => {
       cancelButtonText: "取消",
     });
     await deletePositionService(ID);
-    await positionStore.getPosition(); // 刷新数据
+    await positionStore.getPosition();
     ElMessage.success("删除成功");
   } catch (error) {
     if (error !== "cancel") {
@@ -75,7 +69,6 @@ const deletePosition = async (ID) => {
   }
 };
 
-// 编辑岗位
 const editPosition = (ID, position) => {
   isEdit.value = true;
   isDrawerVisible.value = true;
@@ -91,7 +84,6 @@ const editPosition = (ID, position) => {
 
 const editPositionSubmit = async () => {
   try {
-    console.log("try....");
     await formRef.value.validate();
     await editPositionService(currentID.value, editFormData.value);
     await positionStore.getPosition();
@@ -99,12 +91,10 @@ const editPositionSubmit = async () => {
     isDrawerVisible.value = false;
     formRef.value.resetFields();
   } catch (error) {
-    console.error("编辑请求失败:", error.response || error);
     ElMessage.error("修改失败");
   }
 };
 
-// 新增岗位
 const addPosition = () => {
   isEdit.value = false;
   isDrawerVisible.value = true;
@@ -127,7 +117,6 @@ const addPositionSubmit = async () => {
     isDrawerVisible.value = false;
     formRef.value.resetFields();
   } catch (error) {
-    console.error("新增请求失败:", error.response || error);
     ElMessage.error("新增失败");
   }
 };
@@ -138,63 +127,61 @@ const handleConfirm = async () => {};
 // 处理 折叠展开 或 添加 逻辑
 const handleDepartmentAction = () => {};
 
-defineProps({
-  activeButton: String,
+onMounted(async () => {
+  await departmentStore.getDepart();
+  await positionStore.getPosition();
 });
 </script>
 
 <template>
-  <el-card v-if="activeButton === 'positionRecruit'">
-    <!-- 滚动区域 -->
-    <el-scrollbar height="calc(100vh - 150px)" always>
-      <div class="scroll-content">
-        <div v-for="department in departments" :key="department.ID">
-          <!-- 部门信息 -->
-          <div class="depart-header">
-            <span>{{ department.departName }}</span>
-            <el-button
-              type="primary"
-              color="#fff"
-              :icon="Plus"
-              circle
-              @click="handleDepartmentAction(department.ID)"
-            ></el-button>
-          </div>
+  <PageCard v-if="activeButton === 'positionRecruit'">
+    <div class="scroll-content">
+      <div v-for="department in departments" :key="department.ID">
+        <!-- 部门信息 -->
+        <div class="depart-header">
+          <span>{{ department.departName }}</span>
+          <el-button
+            type="primary"
+            color="#fff"
+            :icon="Plus"
+            circle
+            @click="handleDepartmentAction(department.ID)"
+          ></el-button>
+        </div>
 
-          <!-- 岗位内容 -->
-          <el-collapse-transition>
-            <div v-if="positions" class="sub-jobs">
-              <div
-                v-for="position in positions"
-                :key="position.ID"
-                class="job-item"
-              >
-                <span>{{
-                  position.belong_to === department.departName
-                    ? position.positionName
-                    : ""
-                }}</span>
-                <div class="actions">
-                  <el-button
-                    type="primary"
-                    icon="edit"
-                    color="#fff"
-                    circle
-                    @click="editPosition(position.ID, position)"
-                  ></el-button>
-                  <el-button
-                    type="danger"
-                    icon="delete"
-                    circle
-                    @click="deletePosition(position.ID)"
-                  ></el-button>
-                </div>
+        <!-- 岗位内容 -->
+        <el-collapse-transition>
+          <div v-if="positions" class="sub-jobs">
+            <div
+              v-for="position in positions"
+              :key="position.ID"
+              class="job-item"
+            >
+              <span>{{
+                position.belong_to === department.departName
+                  ? position.positionName
+                  : ""
+              }}</span>
+              <div class="actions">
+                <el-button
+                  type="primary"
+                  icon="edit"
+                  color="#fff"
+                  circle
+                  @click="editPosition(position.ID, position)"
+                ></el-button>
+                <el-button
+                  type="danger"
+                  icon="delete"
+                  circle
+                  @click="deletePosition(position.ID)"
+                ></el-button>
               </div>
             </div>
-          </el-collapse-transition>
-        </div>
+          </div>
+        </el-collapse-transition>
       </div>
-    </el-scrollbar>
+    </div>
 
     <!-- 编辑抽屉 -->
     <el-drawer
@@ -245,19 +232,10 @@ defineProps({
       </div>
     </el-drawer>
     <el-button @click="addPosition">增加功能测试按钮</el-button>
-  </el-card>
+  </PageCard>
 </template>
 
 <style scoped>
-.el-card {
-  height: auto;
-  min-height: 100vh;
-}
-
-.scroll-content {
-  padding: 16px;
-}
-
 .depart-header {
   display: flex;
   justify-content: space-between;

@@ -15,7 +15,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://10.17.129.240:8080",
+        target: "http://118.24.79.139:8088",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
@@ -24,19 +24,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),
-    },
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        logger: {
-          warn: (message, options) => {
-            if (!message.includes("darken()")) {
-              console.warn(message);
-            }
-          },
-        },
-      },
     },
   },
 });

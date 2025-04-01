@@ -24,6 +24,8 @@ export const editGameService = (ID, data) => {
     })
 }
 
-export const showGameService = (gameID) => {
-    return service.put('/game/display', gameID)
+export const showGameService = (fileID) => {
+    return service.put('/game/display', {
+        gameID: [...fileID]
+    })
 }

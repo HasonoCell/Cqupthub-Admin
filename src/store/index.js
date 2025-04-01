@@ -5,9 +5,10 @@ const pinia = createPinia()
 pinia.use(persist)
 export default pinia
 
-import { useUserStore } from "./modules/user"
 import { useDepartmentStore } from "./modules/department"
 import { usePositionStore } from "./modules/position"
 import { useImageStore } from "./modules/image"
+import { useProjectStore } from "./modules/project"
+import { useGameStore } from './modules/game'
 
-export { useUserStore, useDepartmentStore, usePositionStore, useImageStore }
+export { useDepartmentStore, usePositionStore, useImageStore, useProjectStore, useGameStore }

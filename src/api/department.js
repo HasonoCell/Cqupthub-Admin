@@ -1,6 +1,5 @@
 import service from "../utils/http";
 
-// 注意是大写的 ID 不是小写的 id ！！！
 export const addDepartmentService = (data) => {
     return service.post('/department/append', data, {
         headers: {

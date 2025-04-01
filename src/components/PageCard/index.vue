@@ -1,5 +1,5 @@
 <template>
-  <el-card shadow="never">
+  <el-card shadow="never" class="page-container">
     <template #header>
       <div class="card-header">
         <slot name="header"></slot>
@@ -28,8 +28,9 @@
   justify-content: end;
 }
 
-.el-card {
-  height: 100%;
+.page-container {
+  min-height: 90vh;
+  box-sizing: border-box;
 }
 
 :deep(.el-card__header) {

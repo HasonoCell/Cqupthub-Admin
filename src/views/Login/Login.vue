@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from "vue";
-import { useUserStore } from "../../store";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { userLoginService } from "../../api/user";
+
+const formRef = ref();
+const router = useRouter();
 
 const formModel = ref({
   username: "",
@@ -25,25 +27,19 @@ const rules = {
   ],
 };
 
-const formRef = ref();
-
-const userStore = useUserStore();
-
-const router = useRouter();
-
-const loading = ref(false);
 const handleLogin = async () => {
   try {
-    loading.value = true;
     await formRef.value.validate();
-    const res = await userLoginService(formModel.value);
-    userStore.setToken(res.data);
+    await userLoginService(formModel.value);
+
+    localStorage.setItem('isLoggedIn', 'true')
     ElMessage.success("登录成功");
-    router.push({ path: "/" });
+
+    const redirect = router.currentRoute.value.query.redirect || '/'
+    router.push(redirect);
   } catch (error) {
+    localStorage.removeItem('isLoggedIn')
     ElMessage.error("用户名或密码错误");
-  } finally {
-    loading.value = false;
   }
 };
 </script>
@@ -51,7 +47,7 @@ const handleLogin = async () => {
 <template>
   <el-row class="container">
     <el-col :span="9" :offset="3" class="logo" />
-    <el-col :span="9" :offset="1" class="login">
+    <el-col :span="8" :offset="1" class="login">
       <div class="login-contain">
         <span class="title">登录</span>
         <el-form :model="formModel" :rules="rules" ref="formRef">
@@ -69,8 +65,10 @@ const handleLogin = async () => {
               v-model="formModel.password"
             ></el-input>
           </el-form-item>
+          <el-form-item>
+            <el-button @click="handleLogin">登录</el-button>
+          </el-form-item>
         </el-form>
-        <el-button @click="handleLogin">登录</el-button>
       </div>
     </el-col>
   </el-row>
@@ -95,12 +93,9 @@ const handleLogin = async () => {
 }
 
 .login-contain {
-  width: 506px;
-  height: 282px;
-  min-width: 200px;
-  min-height: 160px;
-  max-width: 90%;
-  border-radius: 23px;
+  width: 500px;
+  height: 280px;
+  border-radius: 24px;
   background: #ffffff;
   box-shadow: 12px 16px 10px 0px rgba(0, 0, 0, 0.4);
   display: flex;
@@ -114,28 +109,27 @@ const handleLogin = async () => {
     font-weight: 400;
   }
 
+  .el-form-item {
+    width: 355px;
+  }
+
   .el-input {
     width: 100%;
-    max-width: 355px;
     min-width: 200px;
     height: 42px;
     border-radius: 5px;
-    box-sizing: border-box;
     border: 1px solid #000000;
   }
 
   .el-button {
     width: 100%;
-    max-width: 200px;
-    min-width: 100px;
-    height: 30px;
     border-radius: 5px;
     background: #28d1c6;
     color: #ffffff;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-      background: darken(#28d1c6, 16.39%);
+      background: #108f86;
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(40, 209, 198, 0.3);
     }

@@ -25,5 +25,7 @@ export const deleteProjectService = (ID) => {
 }
 
 export const showProjectService = (fileID) => {
-    return service.put('/project/display', fileID)
+    return service.put('/project/display', {
+        projectID: [...fileID]
+    })
 }

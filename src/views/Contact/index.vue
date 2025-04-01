@@ -4,6 +4,8 @@ import { ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { changeContactService, getContactService } from "../../api/contact";
 
+const formRef = ref();
+
 const formModel = ref({
   studioAddr: "",
   phoneNum: "",
@@ -11,17 +13,16 @@ const formModel = ref({
   qq: "",
 });
 
-const loading = ref(false);
+const getContact = async () => {
+  const { data } = await getContactService();
+  formModel.value = data;
+};
 
 onMounted(async () => {
   try {
-    loading.value = true;
-    const { data } = await getContactService();
-    formModel.value = data;
+    getContact();
   } catch (error) {
     ElMessage.error("获取联系方式失败:", error);
-  } finally {
-    loading.value = false;
   }
 });
 
@@ -60,13 +61,12 @@ const rules = {
   ],
 };
 
-const formRef = ref();
-
 const handleChange = async () => {
   try {
     await formRef.value.validate();
     await changeContactService(formModel.value);
     ElMessage.success("更改成功");
+    getContact()
   } catch (error) {
     ElMessage.error("请正确填写所有必填项");
   }

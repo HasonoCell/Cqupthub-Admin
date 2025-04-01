@@ -1,21 +1,12 @@
 import axios from "axios";
-import { useUserStore } from "../store";
 
 const service = axios.create({
   baseURL: "/api",
-  timeout: 5000,
+  timeout: 20000,
 });
 
 service.interceptors.request.use(
   (config) => {
-    // const token = localStorage.getItem("token");
-    // if (token) {
-    //   config.headers["Authorization"] = `Bearer ${token}`;
-    // }
-    const userStore = useUserStore();
-    if (userStore.token) {
-      config.headers.Authorization = userStore.token;
-    }
     return config;
   },
   (error) => {

@@ -3,13 +3,17 @@ import PageCard from "@/components/PageCard/index.vue";
 import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import { userChangePWDService } from "../../api/user";
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+const formRef = ref();
 const formModel = ref({
   username: "",
   password: "",
   newPassword: "",
   reNewPassword: "",
 });
+
 const rules = {
   username: [
     { required: true, message: "请输入用户名", trigger: "blur" },
@@ -54,13 +58,15 @@ const rules = {
   ],
 };
 
-const formRef = ref();
 const handleChange = async () => {
   try {
     await formRef.value.validate();
     await userChangePWDService(formModel.value);
     ElMessage.success("密码更新成功");
     formRef.value.resetFields();
+    localStorage.removeItem('isLoggedIn')
+    router.push('/login')
+    
   } catch (error) {
     ElMessage.error("请正确填写信息");
   }
@@ -73,13 +79,7 @@ const handleChange = async () => {
       <span>账号管理</span>
     </template>
     <template #default>
-      <el-form
-        label-width="auto"
-        style="width: 100%"
-        :model="formModel"
-        :rules="rules"
-        ref="formRef"
-      >
+      <el-form :model="formModel" :rules="rules" ref="formRef">
         <div class="form-grid">
           <div class="form-column">
             <el-form-item label="用户名" label-position="top" prop="username">
