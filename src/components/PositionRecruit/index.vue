@@ -42,14 +42,6 @@ const rules = {
     },
   ],
   requirement: [{ required: true, message: "请输入需求", trigger: "blur" }],
-  // deliveryEmail: [
-  //   { required: true, message: "请输入邮箱账号", trigger: "blur" },
-  //   {
-  //     pattern: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
-  //     message: "邮箱格式不正确",
-  //     trigger: "blur",
-  //   },
-  // ],
 };
 
 // 删除岗位
@@ -69,10 +61,10 @@ const deletePosition = async (ID) => {
   }
 };
 
-const editPosition = (ID, position) => {
+const editPosition = (position) => {
   isEdit.value = true;
   isDrawerVisible.value = true;
-  currentID.value = ID;
+  currentID.value = position.ID;
 
   editFormData.value = {
     belong_to: position.belong_to,
@@ -95,13 +87,13 @@ const editPositionSubmit = async () => {
   }
 };
 
-const addPosition = () => {
+const addPosition = (departName) => {
   isEdit.value = false;
   isDrawerVisible.value = true;
   formRef.value?.resetFields();
 
   editFormData.value = {
-    belong_to: "",
+    belong_to: departName,
     positionName: "",
     requirement: "",
     deliveryEmail: "",
@@ -111,7 +103,7 @@ const addPosition = () => {
 const addPositionSubmit = async () => {
   try {
     await formRef.value.validate();
-    await addPositionService(editFormData.value);
+    editFormData.value.belong_to = await addPositionService(editFormData.value);
     await positionStore.getPosition();
     ElMessage.success("新增成功");
     isDrawerVisible.value = false;
@@ -120,12 +112,6 @@ const addPositionSubmit = async () => {
     ElMessage.error("新增失败");
   }
 };
-
-// 提交表单
-const handleConfirm = async () => {};
-
-// 处理 折叠展开 或 添加 逻辑
-const handleDepartmentAction = () => {};
 
 onMounted(async () => {
   await departmentStore.getDepart();
@@ -145,41 +131,35 @@ onMounted(async () => {
             color="#fff"
             :icon="Plus"
             circle
-            @click="handleDepartmentAction(department.ID)"
+            @click="addPosition(department.departName)"
           ></el-button>
         </div>
 
         <!-- 岗位内容 -->
-        <el-collapse-transition>
-          <div v-if="positions" class="sub-jobs">
-            <div
-              v-for="position in positions"
-              :key="position.ID"
-              class="job-item"
-            >
-              <span>{{
-                position.belong_to === department.departName
-                  ? position.positionName
-                  : ""
-              }}</span>
-              <div class="actions">
-                <el-button
-                  type="primary"
-                  icon="edit"
-                  color="#fff"
-                  circle
-                  @click="editPosition(position.ID, position)"
-                ></el-button>
-                <el-button
-                  type="danger"
-                  icon="delete"
-                  circle
-                  @click="deletePosition(position.ID)"
-                ></el-button>
-              </div>
+
+        <div v-for="position in positions" :key="position.ID" class="sub-jobs">
+          <div
+            v-if="position.belong_to === department.departName"
+            class="job-item"
+          >
+            <span>{{ position.positionName }}</span>
+            <div class="actions">
+              <el-button
+                type="primary"
+                icon="edit"
+                color="#fff"
+                circle
+                @click="editPosition(position)"
+              ></el-button>
+              <el-button
+                type="danger"
+                icon="delete"
+                circle
+                @click="deletePosition(position.ID)"
+              ></el-button>
             </div>
           </div>
-        </el-collapse-transition>
+        </div>
       </div>
     </div>
 
@@ -231,7 +211,6 @@ onMounted(async () => {
         >
       </div>
     </el-drawer>
-    <el-button @click="addPosition">增加功能测试按钮</el-button>
   </PageCard>
 </template>
 
@@ -248,7 +227,6 @@ onMounted(async () => {
   border-radius: 8px;
   border: 2px solid #000;
   margin-bottom: 12px;
-  transition: background-color 0.3s ease;
 
   &:hover {
     background-color: #ccc;
@@ -288,7 +266,6 @@ onMounted(async () => {
   font-weight: 600;
   border-radius: 6px;
   border: 1px solid #000;
-  transition: background-color 0.3s ease;
 
   &:hover {
     background-color: #ddd;

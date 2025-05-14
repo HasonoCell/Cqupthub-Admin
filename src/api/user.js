@@ -5,5 +5,5 @@ export const userLoginService = (data) => {
 };
 
 export const userChangePWDService = (data) => {
-  return service.put("/account", data)
-}
+  return service.put("/account", data);
+};

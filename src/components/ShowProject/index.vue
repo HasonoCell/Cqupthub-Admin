@@ -60,8 +60,8 @@ const changeProject = async () => {
       selectedProjectsID.value = [];
       ElMessage.success("展示项目更新成功");
       nextTick(() => {
-        scrollContainer.value?.update()
-      })
+        scrollContainer.value?.update();
+      });
     } catch (error) {
       selectedProjectsID.value = [];
       ElMessage.error("更新失败");
@@ -69,7 +69,7 @@ const changeProject = async () => {
   } else {
     selectedProjectsID.value = [...displayedProjectsID.value];
     isSave.value = true;
-    ElMessage.info("请选择需要展示的项目");
+    ElMessage.warning("请选择需要展示的项目");
   }
 };
 
@@ -115,11 +115,11 @@ const editProject = (ID, project) => {
 const editProjectSubmit = async () => {
   try {
     await formRef.value.validate();
-    ElMessage.info("上传中，请耐心等待");
+    ElMessage.warning("上传中，请耐心等待");
     const formData = new FormData();
     formData.append("projectName", editFormData.value.projectName);
     formData.append("projectPath", editFormData.value.projectPath);
-    // get时图片字段为projectImage，post时图片字段为image
+    // get时图片字段为projectImage，post/put时图片字段为image
     formData.append("image", editFormData.value.projectImage);
     await editProjectService(currentId.value, formData);
     await projectStore.getProject();
@@ -146,7 +146,7 @@ const addProject = () => {
 const addProjectSubmit = async () => {
   try {
     await formRef.value.validate();
-    ElMessage.info("上传中，请耐心等待");
+    ElMessage.warning("上传中，请耐心等待");
     const formData = new FormData();
     formData.append("projectName", editFormData.value.projectName);
     formData.append("projectPath", editFormData.value.projectPath);
@@ -316,9 +316,7 @@ onBeforeUnmount(() => {
                 :show-file-list="false"
                 :on-change="onUploadFile"
               >
-                <el-button color="#000" type="primary" label-position="top"
-                  >更换</el-button
-                >
+                <el-button color="#000" label-position="top">更换</el-button>
               </el-upload>
             </div>
           </el-form-item>

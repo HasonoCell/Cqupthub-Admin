@@ -70,7 +70,7 @@ const changeGame = async () => {
   } else {
     selectedGamesID.value = [...displayedGamesID.value];
     isSave.value = true;
-    ElMessage.info("请选择需要展示的游戏");
+    ElMessage.warning("请选择需要展示的游戏");
   }
 };
 
@@ -114,7 +114,7 @@ const editGame = (ID, game) => {
 const editGameSubmit = async () => {
   try {
     await formRef.value.validate();
-    ElMessage.info("上传中，请耐心等待");
+    ElMessage.warning("上传中，请耐心等待");
     const formData = new FormData();
     formData.append("gameName", editFormData.value.gameName);
     formData.append("gamePath", editFormData.value.gamePath);
@@ -145,7 +145,7 @@ const addGame = () => {
 const addGameSubmit = async () => {
   try {
     await formRef.value.validate();
-    ElMessage.info("上传中，请耐心等待");
+    ElMessage.warning("上传中，请耐心等待");
     const formData = new FormData();
     formData.append("gameName", editFormData.value.gameName);
     formData.append("gamePath", editFormData.value.gamePath);

@@ -50,14 +50,6 @@ const rules = {
       trigger: "blur",
     },
   ],
-  email: [
-    { required: true, message: "请输入邮箱账号", trigger: "blur" },
-    {
-      pattern: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
-      message: "邮箱格式不正确",
-      trigger: "blur",
-    },
-  ],
 };
 
 const editDepart = (ID, department) => {

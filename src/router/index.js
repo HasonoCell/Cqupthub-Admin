@@ -76,21 +76,21 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
-  
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
   // 需要登录的路由匹配规则
-  const requiresAuth = to.matched.some(record => record.meta.requireAuth)
-  
+  const requiresAuth = to.matched.some((record) => record.meta.requireAuth);
+
   if (requiresAuth && !isLoggedIn) {
     next({
-      path: '/login',
-      query: { redirect: to.fullPath }
-    })
-  } else if (to.path === '/login' && isLoggedIn) {
-    next('/') // 已登录时禁止访问登录页
+      path: "/login",
+      query: { redirect: to.fullPath },
+    });
+  } else if (to.path === "/login" && isLoggedIn) {
+    next("/"); // 已登录时禁止访问登录页
   } else {
-    next()
+    next();
   }
-})
+});
 
 export default router;

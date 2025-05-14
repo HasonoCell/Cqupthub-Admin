@@ -23,7 +23,7 @@ service.interceptors.response.use(
     return data;
   },
   (error) => {
-    console.log("err" + error);
+    console.log("err: " + error);
     return Promise.reject(error);
   }
 );
