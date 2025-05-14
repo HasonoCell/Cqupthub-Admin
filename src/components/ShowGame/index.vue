@@ -55,17 +55,17 @@ const changeGame = async () => {
   if (isSave.value) {
     try {
       await showGameService(selectedGamesID.value);
-      console.log("here");
       await gameStore.getGame();
       isSave.value = false;
       selectedGamesID.value = [];
       ElMessage.success("展示游戏更新成功");
-      nextTick(() => {
+      await nextTick(() => {
         scrollContainer.value?.update();
       });
     } catch (error) {
       selectedGamesID.value = [];
       ElMessage.error("更新失败");
+      isSave.value = true;
     }
   } else {
     selectedGamesID.value = [...displayedGamesID.value];
@@ -93,9 +93,7 @@ const deleteGame = async (ID) => {
     await gameStore.getGame();
     ElMessage.success("删除成功");
   } catch (error) {
-    if (error !== "cancel") {
-      ElMessage.error("删除失败");
-    }
+    ElMessage.error("删除失败: " + error.message);
   }
 };
 

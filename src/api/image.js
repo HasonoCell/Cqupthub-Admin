@@ -16,6 +16,6 @@ export const getImageService = () => {
   return service.get("/image/acquire");
 };
 
-export const setImageService = (imageNames) => {
+export const setHomePageService = (imageNames) => {
   return service.put("/image/homepage", imageNames);
 };
