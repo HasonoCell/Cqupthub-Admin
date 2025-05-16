@@ -13,6 +13,7 @@ export const useProjectStore = defineStore(
         error.value = null;
         const { data } = await getProjectService();
         projects.value = data;
+        // projects.value.forEach(p => console.log(p))
       } catch (err) {
         error.value = err.message || "获取项目数据失败";
         ElMessage.error(err);

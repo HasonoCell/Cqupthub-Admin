@@ -13,7 +13,6 @@ export const useImageStore = defineStore(
         error.value = null;
         const { data } = await getImageService();
         allImage.value = data;
-        allImage.value.forEach(i => console.log(i))
       } catch (err) {
         error.value = err.message || "获取图片数据失败";
         ElMessage.error(err);

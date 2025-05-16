@@ -203,9 +203,8 @@ onBeforeUnmount(() => {
             >
               <el-card class="project-card">
                 <div class="project-image">
-                  <img
+                  <el-image
                     :src="'http://' + project.projectImage"
-                    alt="图片加载失败"
                     v-if="project.projectImage"
                   />
                   <div v-else class="image-placeholder"></div>

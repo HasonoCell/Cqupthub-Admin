@@ -14,6 +14,7 @@ export const useDepartmentStore = defineStore(
         error.value = null;
         const { data } = await getDepartmentService();
         departments.value = data;
+        // departments.value.forEach(d => console.log(d))
       } catch (err) {
         error.value = err.message || "获取部门数据失败";
         ElMessage.error(err);

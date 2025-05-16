@@ -22,10 +22,6 @@ const displayedImagesName = computed(() => {
   return displayedImages.value.map((image) => image.file_name);
 });
 
-// allImage.value.forEach((image) => {
-//   console.log("http://" + image.url);
-// });
-
 const changeHomePage = async () => {
   if (isSave.value) {
     try {
@@ -104,9 +100,8 @@ onMounted(() => {
             class="homepage-column"
           >
             <div class="image">
-              <!-- <el-image :src="'http://' + image.url" /> -->
-              <div class="image-placeholder"></div>
-              <div class="delete-icon" />
+              <el-image v-if="image.url" :src="'http://' + image.url" />
+              <div v-else class="image-placeholder"></div>
             </div>
           </el-col>
         </el-row>
@@ -143,10 +138,13 @@ onMounted(() => {
               }"
               @click="selectImage(image.file_name)"
             >
-              <!-- <el-image :src="'http://' + image.url" /> -->
-              <div class="image-placeholder"></div>
-              <div class="delete-icon" /></div
-          ></el-col>
+              <el-image v-if="image.url" :src="'http://' + image.url" />
+              <div v-else class="image-placeholder" />
+              <el-icon class="delete-icon" @click="deleteImage(image.file_name)"
+                ><Delete
+              /></el-icon>
+            </div>
+          </el-col>
         </el-row>
       </div>
     </template>
@@ -189,6 +187,7 @@ onMounted(() => {
   margin-bottom: 20px;
   transition: transform 0.3s ease;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+  position: relative;
 
   &:hover {
     transform: scale(1.025);
@@ -199,7 +198,7 @@ onMounted(() => {
   }
 
   &.selected-image {
-    box-shadow: 0 2px 12px 0 rgb(60, 60, 60);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   }
 }
 
@@ -207,5 +206,21 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   background-color: #d9d9d9;
+}
+
+.image:hover .delete-icon {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.delete-icon {
+  position: absolute;
+  bottom: 40px;
+  right: 0;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: red;
+  font-size: larger;
 }
 </style>

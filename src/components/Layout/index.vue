@@ -1,17 +1,13 @@
 <template>
   <div class="common-layout">
     <el-container direction="horizontal" style="height: 100vh">
-      <el-aside
-        :width="isCollapse ? '64px' : '200px'"
-        class="aside"
-        style="transition: width 0.3s"
-      >
-        <SideBar :isCollapse="isCollapse" />
+      <el-aside :width="'200px'" class="aside" style="transition: width 0.3s">
+        <SideBar />
       </el-aside>
 
       <el-container style="flex: 1; overflow: hidden">
         <el-header class="header" height="60px">
-          <Header :isCollapse="isCollapse" @toggle-collapse="toggleCollapse" />
+          <Header />
         </el-header>
 
         <el-main class="main" style="overflow: auto"> <router-view /> </el-main>
@@ -23,12 +19,6 @@
 <script setup>
 import SideBar from "./SideBar/index.vue";
 import Header from "./Header/index.vue";
-import { ref } from "vue";
-
-const isCollapse = ref(false);
-const toggleCollapse = () => {
-  isCollapse.value = !isCollapse.value;
-};
 </script>
 
 <style lang="scss" scoped>

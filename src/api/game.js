@@ -5,6 +5,7 @@ export const getGameService = () => {
 };
 
 export const addGameService = (data) => {
+  // console.log([...data])
   return service.post("/game/append", data, {
     headers: {
       "Content-Type": "multipart/form-data",

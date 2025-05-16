@@ -93,7 +93,7 @@ const deleteGame = async (ID) => {
     await gameStore.getGame();
     ElMessage.success("删除成功");
   } catch (error) {
-    ElMessage.error("删除失败: " + error.message);
+    ElMessage.error("删除失败: " + error.data);
   }
 };
 

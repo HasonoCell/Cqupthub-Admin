@@ -66,6 +66,17 @@ const routes = [
           showInMenu: true,
         },
       },
+      {
+        path: "/manage",
+        name: "manage",
+        component: () => import("../views/Manage/index.vue"),
+        meta: {
+          requireAuth: true,
+          title: "优秀团队管理",
+          icon: "manage",
+          showInMenu: true,
+        },
+      },
     ],
   },
 ];

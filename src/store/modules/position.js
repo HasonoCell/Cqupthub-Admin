@@ -14,6 +14,7 @@ export const usePositionStore = defineStore(
         error.value = null;
         const { data } = await getPositionService();
         positions.value = data;
+        positions.value.forEach(p => console.log(p))
       } catch (err) {
         error.value = err.message || "获取岗位数据失败";
         ElMessage.error(err);

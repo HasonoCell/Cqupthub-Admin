@@ -5,6 +5,7 @@ export const getProjectService = () => {
 };
 
 export const addProjectService = (data) => {
+  console.log([...data])
   return service.post("/project/append", data, {
     headers: {
       "Content-Type": "multipart/form-data",

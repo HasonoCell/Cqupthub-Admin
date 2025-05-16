@@ -149,6 +149,7 @@ onMounted(async () => {
                 icon="edit"
                 color="#fff"
                 circle
+                style="border-color: black"
                 @click="editPosition(position)"
               ></el-button>
               <el-button

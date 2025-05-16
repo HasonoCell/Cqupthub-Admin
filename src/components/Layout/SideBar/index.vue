@@ -3,10 +3,6 @@ import { useRouter } from "vue-router";
 import { computed } from "vue";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 
-defineProps({
-  isCollapse: Boolean,
-});
-
 const router = useRouter();
 
 const menuRoutes = computed(() => {
@@ -38,7 +34,7 @@ const menuRoutes = computed(() => {
           v-if="route.meta?.icon"
           :name="route.meta.icon"
           size="22px"
-          :color="$route.path === route.path ? 'white' : 'black'"
+          :color="$route.path === route.path ? '#FFFFFF' : '#4B5563'"
         />
         <template #title>
           <span>{{ route.meta.title }}</span>
@@ -74,8 +70,7 @@ const menuRoutes = computed(() => {
   height: 56px;
   line-height: 56px;
   font-size: 14px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-  box-shadow 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
   display: flex;
   gap: 10px;
 

@@ -13,6 +13,7 @@ export const useGameStore = defineStore(
         error.value = null;
         const { data } = await getGameService();
         games.value = data;
+        // games.value.forEach(g => console.log(g))
       } catch (err) {
         error.value = err.message || "获取项目数据失败";
         ElMessage.error(err);
